@@ -14,7 +14,9 @@ public class ArticleObject {
 	ArrayList<String> searchTerms = new ArrayList<String>();
 	private String domain;
 	
-	
+	public ArticleObject(){
+		
+	}
 	public ArticleObject(Date theDate, String theTitle, String theText, String thePublication, ArrayList<String> theWords ){
 		issueDate = theDate;
 		articleTitle = theTitle;

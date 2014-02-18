@@ -38,29 +38,61 @@ public class DataManager {
 		System.out.println("number of elements is: "+doc.getElementsByTagName("doc").getLength());
 			
 		NodeList stringList = doc.getElementsByTagName("str");	
-		for (int i=0; i<stringList.getLength(); i++){
+		
+		ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
+		
+		NodeList dateList = doc.getElementsByTagName("date");
+		for (int i=0; i<dateList.getLength(); i++){
+			ArticleObject artOb = new ArticleObject();
+			
+			Node dNode = dateList.item(i);
+					
+			if (dNode.getNodeType() == Node.ELEMENT_NODE){
+							
+				Element elem = (Element) dNode;
+							
+				//System.out.println("attribute: " + elem.getAttribute("name"));
+				if (elem.getAttribute("name").equals("IssueDate")){
+					
+					//System.out.println("date: " + elem.getTextContent());
+					String artDate = elem.getTextContent();
+					//System.out.println("the date: "+transformToDate(artDate));
+					artOb.setIssueDate(transformToDate(artDate));
+					
+				}
+			}
 				
+			array.add(artOb);
+		}
+		int count = 0;
+		for (int i=0; i<stringList.getLength(); i++){
+			
 			Node lNode = stringList.item(i);
 				
 			if (lNode.getNodeType() == Node.ELEMENT_NODE){
+				
 					
 				Element elem = (Element) lNode;
 					
 				//System.out.println("attribute: " + elem.getAttribute("name"));
 				if (elem.getAttribute("name").equals("ArticleTitle")){
 					
-					System.out.println("title: " + elem.getTextContent());
+					//System.out.println("title: " + elem.getTextContent());
+					array.get(count).setArticleTitle(elem.getTextContent());
 				}
 				else if (elem.getAttribute("name").equals("ArticleText")){
 					
 					String article = replaceCharact(elem.getTextContent());						
-					System.out.println("article is:"+ article);
+					//System.out.println("article is:"+ article);
 							
-					this.getWordList(article);
+					System.out.println("size of array: "+this.getWordList(article).size());
+					array.get(count).setArticleText(article);
+					array.get(count).setWordList(this.getWordList(article));
 	
 				}
-				else if (elem.getAttribute("name").equals("IssueDate")){
-							
+				else if (elem.getAttribute("name").equals("PublicationTitle")){
+					array.get(count).setPublicationTitle(elem.getTextContent());	
+					count++;
 				}
 								
 		}
@@ -76,26 +108,11 @@ public class DataManager {
 			//}
 			//}
 				
-		}
-		NodeList dateList = doc.getElementsByTagName("date");
-		for (int i=0; i<dateList.getLength(); i++){
-			Node dNode = dateList.item(i);
-					
-			if (dNode.getNodeType() == Node.ELEMENT_NODE){
-							
-				Element elem = (Element) dNode;
-							
-				//System.out.println("attribute: " + elem.getAttribute("name"));
-				if (elem.getAttribute("name").equals("IssueDate")){
-					
-					System.out.println("date: " + elem.getTextContent());
-					String artDate = elem.getTextContent();
-					System.out.println("the date: "+transformToDate(artDate));
-				}
-			}
-				
+		
 			
 		}
+		System.out.println(array.get(1).toString());
+		
 	}
 			
 	
