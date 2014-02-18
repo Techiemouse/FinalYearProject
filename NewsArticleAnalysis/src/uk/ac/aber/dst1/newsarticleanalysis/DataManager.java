@@ -90,7 +90,7 @@ public class DataManager {
 					
 					System.out.println("date: " + elem.getTextContent());
 					String artDate = elem.getTextContent();
-					System.out.println("the date: "+transformToDate(artDate)); // test
+					System.out.println("the date: "+transformToDate(artDate));
 				}
 			}
 				
