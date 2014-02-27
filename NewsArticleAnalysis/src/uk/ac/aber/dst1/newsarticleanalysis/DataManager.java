@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -20,7 +21,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DataManager {
-	
+	ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
 	
 	
 //	public void parsingXML(String input) throws ParserConfigurationException, SAXException, IOException, ParseException{
@@ -98,16 +99,7 @@ public class DataManager {
 //								
 //		}
 				
-			//LOOP THROUGH EACH article
-			//{
-					
-			//if(articleid.getchars.get(articleid.getchars().size()-1) == 1){
-			//add to new spot in array
-			//   }
-			//	else{
-			//add to the previous spot in array
-			//}
-			//}
+			
 				
 		
 			
@@ -130,15 +122,17 @@ public class DataManager {
 			 //getting the list of only the tags with doc in
 			for (int i=0; i<doc.getElementsByTagName("doc").getLength();i++){
 			printNote(doc.getElementsByTagName("doc").item(i));
+			//array.add(printNote(doc.getElementsByTagName("doc").item(i)));
 			}
+			printArray(array);
 		}
 	
 		
 	}
 	
 	private void printNote(Node tempNode) {
-		ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
- 
+		
+		ArticleObject artOb = new ArticleObject();
 		// make sure it's element node.
 		if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
 	 
@@ -152,15 +146,15 @@ public class DataManager {
 		System.out.println("count child =" + articleNodes.getLength());
 		
 		for (int count =0; count<articleNodes.getLength(); count++){
-
+			
 			if (articleNodes.item(count).hasAttributes()) {
 	 
 				// get attributes names and values
 				NamedNodeMap nodeMap = articleNodes.item(count).getAttributes();
-	 
-				for (int i = 0; i < nodeMap.getLength(); i++) {
-					ArticleObject artOb = new ArticleObject();
-					Node node = nodeMap.item(i);
+				
+				//for (int i = 0; i < nodeMap.getLength(); i++) {
+					
+					Node node = nodeMap.item(count);
 					//System.out.println("attr name : " + node.getNodeName());
 					//System.out.println("attr value : " + node.getNodeValue());
 	 
@@ -169,13 +163,13 @@ public class DataManager {
 					//System.out.println("attribute: " + elem.getAttribute("name"));
 					if (elem.getAttribute("name").equals("ArticleTitle")){
 						
-						System.out.println("title: " + elem.getTextContent());
+						//System.out.println("title: " + elem.getTextContent());
 						artOb.setArticleTitle(elem.getTextContent());
 					}
 					else if (elem.getAttribute("name").equals("ArticleText")){
 						
 						String article = replaceCharact(elem.getTextContent());						
-						System.out.println("article is:"+ article);
+						//System.out.println("article is:"+ article);
 								
 						//System.out.println("size of array: "+this.getWordList(article).size());
 						artOb.setArticleText(article);
@@ -186,22 +180,42 @@ public class DataManager {
 						artOb.setPublicationTitle(elem.getTextContent());	
 						
 					}
+					else if (elem.getAttribute("name").equals("IssueDate")){
+						try {
+							artOb.setIssueDate(transformToDate(elem.getTextContent()));
+						} catch (DOMException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					else if (elem.getAttribute("name").equals("ArticleID")){
+						artOb.setArticleID(elem.getTextContent());
+					}
+					else if (elem.getAttribute("name").equals("Page")){
+						artOb.setPage(Integer.parseInt(elem.getTextContent()));
+					}
+					
 					//add to array of article objects
-					array.add(artOb);		
-				}
+					
+					//System.out.println(array.get(i).toString());
+			
 			}
+			
+			
 			}
 	 
-	
-	 
+		//
+		//System.out.println(artOb.toString());	
+			array.add(artOb);
 			System.out.println("Node Name =" + tempNode.getNodeName() + " end");
-			//System.out.println("count: "+count);
-		
-	 
+			//System.out.println("count: "+count);		
+			
+			
 	    }
-	    
-	    
-	 
+
 	  }
 	
 	public String replaceCharact(String badText){
@@ -227,5 +241,31 @@ public class DataManager {
 		return theDate;
 				
 	}
+	public void printArray(ArrayList<ArticleObject> array){
+		
+		for(int i = 0; i < array.size(); i++) {   
+		    System.out.println(array.get(i));
+		}  
+	}
 	
+	public void appentArticles(){
+		//LOOP THROUGH EACH article
+		//{
+				
+		//if(articleid.getchars.get(articleid.getchars().size()-1) == 1){
+		//add to new spot in array
+		//   }
+		//	else{
+		//add to the previous spot in array
+		//}
+		//}
+		
+		
+	}
+	
+	public void checkIfSameArticle(){
+	
+		
+	
+	}
 }

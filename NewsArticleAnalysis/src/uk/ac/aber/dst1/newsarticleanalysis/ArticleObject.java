@@ -9,10 +9,18 @@ public class ArticleObject {
 	private String articleID;
 	private String articleTitle;
 	private String publicationTitle;
+	private String publicationPID;
+	private String articleAbstract;
+	private String pID;
 	ArrayList<String> verbList = new ArrayList<String>();
 	ArrayList<String> wordList = new ArrayList<String>();
 	ArrayList<String> searchTerms = new ArrayList<String>();
 	private String domain;
+	private int page;
+	private String pagePID;
+	
+	
+	
 	
 	public ArticleObject(){
 		
@@ -93,6 +101,36 @@ public class ArticleObject {
 				+ articleText + ", articleID=" + articleID + ", articleTitle="
 				+ articleTitle + ", publicationTitle=" + publicationTitle
 				+ ", wordList=" + wordList + "]";
+	}
+	public String getPublicationPID() {
+		return publicationPID;
+	}
+	public void setPublicationPID(String publicationPID) {
+		this.publicationPID = publicationPID;
+	}
+	public String getArticleAbstract() {
+		return articleAbstract;
+	}
+	public void setArticleAbstract(String articleAbstract) {
+		this.articleAbstract = articleAbstract;
+	}
+	public String getpID() {
+		return pID;
+	}
+	public void setpID(String pID) {
+		this.pID = pID;
+	}
+	public int getPage() {
+		return page;
+	}
+	public void setPage(int page) {
+		this.page = page;
+	}
+	public String getPagePID() {
+		return pagePID;
+	}
+	public void setPagePID(String pagePID) {
+		this.pagePID = pagePID;
 	}
 	
 	
