@@ -34,7 +34,7 @@ public class URLConnectionReader extends Authenticator  {
 	     }
 	     xmls=sb.toString();
 	     System.out.println("end "+xmls);
-	     dataManager.parsingXML(xmls); 
+	     dataManager.parsingtheXML(xmls); 
 	     
 	     	 in.close();	        
 		}

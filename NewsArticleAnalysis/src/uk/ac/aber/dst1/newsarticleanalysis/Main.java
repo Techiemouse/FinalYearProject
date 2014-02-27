@@ -4,8 +4,9 @@ public class Main {
 	
 	 public static void main(String[] args) throws Exception {
 		 
-		 URLConnectionReader urlConnect = new URLConnectionReader();	 
-		 urlConnect.getArticles();
-
+		URLConnectionReader urlConnect = new URLConnectionReader();	 
+		urlConnect.getArticles();
+		 //TaggerVerbs tagg = new TaggerVerbs();
+		 //tagg.taggIT();
 	 }
 }
