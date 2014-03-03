@@ -34,6 +34,12 @@ public class DataManager {
 		//System.out.println("root tag: "+doc.getDocumentElement().getNodeName());					
 		//System.out.println("number of elements is: "+doc.getElementsByTagName("doc").getLength());
 		if (doc.hasChildNodes()){
+			//getting the result tag to find how many results the query finds
+			NodeList nodes = doc.getElementsByTagName("result");
+			Element result = (Element) nodes.item(0);
+			
+			System.out.println("the number is: "+result.getAttribute("numFound"));
+		
 			 //getting the list of only the tags with doc in
 			for (int i=0; i<doc.getElementsByTagName("doc").getLength();i++){
 			printNote(doc.getElementsByTagName("doc").item(i));
