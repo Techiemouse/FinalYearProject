@@ -100,7 +100,7 @@ public class ArticleObject {
 		return "ArticleObject [issueDate=" + issueDate + ", articleText="
 				+ articleText + ", articleID=" + articleID + ", articleTitle="
 				+ articleTitle + ", publicationTitle=" + publicationTitle
-				+ ", wordList=" + wordList + "]";
+				+ ", wordList=" + wordList + "VERB LIST: "+ verbList +"]";
 	}
 	public String getPublicationPID() {
 		return publicationPID;
