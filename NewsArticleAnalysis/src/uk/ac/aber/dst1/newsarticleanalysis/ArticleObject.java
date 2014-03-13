@@ -20,11 +20,7 @@ public class ArticleObject {
 	private String domain;
 	ArrayList<String> searchTerms = new ArrayList<String>();
 	
-	
-	
-	
-	
-	
+
 	public ArticleObject(){
 		
 	}
@@ -91,15 +87,6 @@ public class ArticleObject {
 		this.domain = domain;
 	}
 
-
-
-	@Override
-	public String toString() {
-		return "ArticleObject [issueDate=" + issueDate + ", articleText="
-				+ articleText + ", articleID=" + articleID + ", articleTitle="
-				+ articleTitle + ", publicationTitle=" + publicationTitle
-				+ ", wordList=" + "VERB LIST: "+ verbList +"]";
-	}
 	public String getPublicationPID() {
 		return publicationPID;
 	}
