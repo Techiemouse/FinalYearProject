@@ -63,7 +63,7 @@ public void createArticleTable(Connection conn){
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	}
-	String createArticleTable = "CREATE TABLE ARTICLE " +
+	String createArticleTable = "CREATE TABLE article " +
             "(article_id VARCHAR(255) not NULL, " +
             " title VARCHAR(255), " + 
             " text VARCHAR(255), " +           
@@ -71,9 +71,8 @@ public void createArticleTable(Connection conn){
             " verb_count VARCHAR(255), " +
             " word_count VARCHAR(255), " +
             " abstract VARCHAR(255), " + 
-            " issue_date DATE, " +            
-            " region VARCHAR(255), " + 
-            " search_terms VARCHAR(255), " + 
+            " issue_date DATE, " +                      
+            " search_term VARCHAR(255), " + 
             " pid VARCHAR(255), " + 
             " page INTEGER, " + 
             " PRIMARY KEY ( article_id ))"; 
@@ -86,8 +85,34 @@ try {
 
 	
 }
+public void createPublicationTable(Connection conn){
+	
+	 Statement stmt = null;
 
-public void addArticleObject(ArticleObject artObj, Connection conn){
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String createPublicationTable = "CREATE TABLE publication" +
+	            "(pid VARCHAR(255) not NULL, " +
+	            " publication_id VARCHAR(255), " + 
+	            " title VARCHAR(255), " +           
+	            " region VARCHAR(255), " + 	        
+	            " PRIMARY KEY (pid ))"; 
+	try {
+		stmt.executeUpdate(createPublicationTable);
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+
+		
+	
+}
+
+public void addArticleObject(ArticleObject artObj, Connection conn, String searchTerm){
 	Statement stmt = null;
 
 	try {
@@ -96,8 +121,9 @@ public void addArticleObject(ArticleObject artObj, Connection conn){
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	}
-	   String addObject = "INSERT INTO article (article_id,title, text, issue_date, verb_list, verb_count, word_list, search_terms, pid, page)" +
-   	        "VALUES ("+artObj.getArticleID()+","+artObj.getArticleTitle()+","+artObj.getArticleText()+")";
+	   String addObject = "INSERT INTO article (article_id, title, text, verb_list, verb_count, word_count, abstract, issue_date, search_term, pid, page)" +
+   	        "VALUES ("+artObj.getArticleID()+","+artObj.getArticleTitle()+","+artObj.getArticleText()+","+artObj.getVerbList()+","+artObj.getVerbCount()+","+artObj.getTextWordCount()+","+artObj.getArticleAbstract()+","+artObj.getIssueDate()+","+searchTerm+","+artObj.getPID()+","+artObj.getPage()+")"
+   	        		+ "ON DUPLICATE KEY UPDATE SET search_term = CONCAT(search_term, "+searchTerm+")";
 	   try {
 		stmt.executeUpdate(addObject);
 	} catch (SQLException e) {

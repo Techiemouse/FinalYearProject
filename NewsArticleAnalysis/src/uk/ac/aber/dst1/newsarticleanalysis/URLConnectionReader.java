@@ -52,7 +52,7 @@ public class URLConnectionReader extends Authenticator  {
 	     xmls=sb.toString();
 	     dataManager.buildDom(xmls);
 	    
-	     dataManager.parsingTheXML(dataManager.buildDom(xmls)); 
+	     dataManager.parsingTheXML(dataManager.buildDom(xmls),searchTerm); 
 	     
 	     	 in.close();	        
 		}

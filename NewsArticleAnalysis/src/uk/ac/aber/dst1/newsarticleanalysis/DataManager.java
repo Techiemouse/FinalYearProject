@@ -47,14 +47,14 @@ public class DataManager {
 
 	}
 
-	public void parsingTheXML(Document doc) {
+	public void parsingTheXML(Document doc, String searchTerm) {
 
 		if (doc.hasChildNodes()){
 
 			 //getting the list of only the tags with doc in
 			for (int i=0; i<doc.getElementsByTagName("doc").getLength();i++){
 				//database.startConnection();
-				database.addArticleObject(printNote(doc.getElementsByTagName("doc").item(i)),database.startConnection());
+				database.addArticleObject(printNote(doc.getElementsByTagName("doc").item(i)),database.startConnection(),searchTerm);
 				
 			
 			}
