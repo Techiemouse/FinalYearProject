@@ -34,7 +34,7 @@ public class TaggerVerbs {
 			//System.out.println(word);
 			//if words don't have the _ sign they will be verbs and will be added to the array
 			if(!word.contains("_")){
-			//System.out.println(word);
+			System.out.println(word);
 			verbList.add(word);
 			}
 			
