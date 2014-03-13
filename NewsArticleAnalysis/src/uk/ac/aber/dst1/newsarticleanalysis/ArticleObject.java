@@ -4,20 +4,23 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ArticleObject {
-	private Date issueDate;
-	private String articleText;
+	private String pID;
+	private String region;
 	private String articleID;
 	private String articleTitle;
+	private String articleAbstract;
+	private int textWordCount;
+	private String articleText;
+	private Date issueDate;
+	ArrayList<String> verbList = new ArrayList<String>();
+	private int verbCount;
+	private int page;
 	private String publicationTitle;
 	private String publicationPID;
-	private String articleAbstract;
-	private String pID;
-	ArrayList<String> verbList = new ArrayList<String>();
-	ArrayList<String> wordList = new ArrayList<String>();
-	ArrayList<String> searchTerms = new ArrayList<String>();
 	private String domain;
-	private int page;
-	private String pagePID;
+	ArrayList<String> searchTerms = new ArrayList<String>();
+	
+	
 	
 	
 	
@@ -30,7 +33,7 @@ public class ArticleObject {
 		articleTitle = theTitle;
 		articleText = theText;
 		publicationTitle = thePublication;
-		wordList=theWords;
+	
 		
 	}
 	
@@ -74,12 +77,7 @@ public class ArticleObject {
 	public void setVerbList(ArrayList<String> verbList) {
 		this.verbList = verbList;
 	}
-	public ArrayList<String> getWordList() {
-		return wordList;
-	}
-	public void setWordList(ArrayList<String> wordList) {
-		this.wordList = wordList;
-	}
+
 	public ArrayList<String> getSearchTerms() {
 		return searchTerms;
 	}
@@ -100,7 +98,7 @@ public class ArticleObject {
 		return "ArticleObject [issueDate=" + issueDate + ", articleText="
 				+ articleText + ", articleID=" + articleID + ", articleTitle="
 				+ articleTitle + ", publicationTitle=" + publicationTitle
-				+ ", wordList=" + wordList + "VERB LIST: "+ verbList +"]";
+				+ ", wordList=" + "VERB LIST: "+ verbList +"]";
 	}
 	public String getPublicationPID() {
 		return publicationPID;
@@ -114,10 +112,10 @@ public class ArticleObject {
 	public void setArticleAbstract(String articleAbstract) {
 		this.articleAbstract = articleAbstract;
 	}
-	public String getpID() {
+	public String getPID() {
 		return pID;
 	}
-	public void setpID(String pID) {
+	public void setPID(String pID) {
 		this.pID = pID;
 	}
 	public int getPage() {
@@ -126,13 +124,31 @@ public class ArticleObject {
 	public void setPage(int page) {
 		this.page = page;
 	}
-	public String getPagePID() {
-		return pagePID;
+	public String getpID() {
+		return pID;
 	}
-	public void setPagePID(String pagePID) {
-		this.pagePID = pagePID;
+	public void setpID(String pID) {
+		this.pID = pID;
 	}
-	
+	public String getRegion() {
+		return region;
+	}
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	public int getTextWordCount() {
+		return textWordCount;
+	}
+	public void setTextWordCount(int textWordCount) {
+		this.textWordCount = textWordCount;
+	}
+	public int getVerbCount() {
+		return verbCount;
+	}
+	public void setVerbCount(int verbCount) {
+		this.verbCount = verbCount;
+	}
+
 	
 	
 	

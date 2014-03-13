@@ -22,8 +22,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DataManager {
-	ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
-
+	//ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
+	DatabaseSetup database= new DatabaseSetup();
 	public Document buildDom(String input) throws ParserConfigurationException,
 			SAXException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -53,16 +53,19 @@ public class DataManager {
 
 			 //getting the list of only the tags with doc in
 			for (int i=0; i<doc.getElementsByTagName("doc").getLength();i++){
-			printNote(doc.getElementsByTagName("doc").item(i));
-			//array.add(printNote(doc.getElementsByTagName("doc").item(i)));
+				//database.startConnection();
+				database.addArticleObject(printNote(doc.getElementsByTagName("doc").item(i)),database.startConnection());
+				
+			
 			}
-			printArray(array);
+			database.closeConnection(database.startConnection());
+		//	printArray(array);
 		}
 	
 		
 	}
 	
-	private void printNote(Node tempNode) {
+	private ArticleObject printNote(Node tempNode) {
 		TaggerVerbs tagg = new TaggerVerbs();
 
 		ArticleObject artOb = new ArticleObject();
@@ -78,28 +81,44 @@ public class DataManager {
 				if (articleNodes.item(count).hasAttributes()) {
 
 					Element elem = (Element) articleNodes.item(count);
-
-					// System.out.println("attribute: " +
-					// elem.getAttribute("name"));
-					if (elem.getAttribute("name").equals("ArticleTitle")) {
-
-						// System.out.println("title: " +
-						// elem.getTextContent());
+					if (elem.getAttribute("name").equals("PID")) {
+						
+						artOb.setPID(elem.getTextContent());
+					} else if (elem.getAttribute("name").equals("Region")) {
+	
+						artOb.setRegion(elem.getTextContent());
+					}
+					else if (elem.getAttribute("name").equals("ArticleID")) {
+						artOb.setArticleID(elem.getTextContent());
+					} 
+					else if (elem.getAttribute("name").equals("ArticleTitle")) {
+	
 						artOb.setArticleTitle(elem.getTextContent());
-					} else if (elem.getAttribute("name").equals("ArticleText")) {
+					} 
+					else if (elem.getAttribute("name").equals("ArticleAbstract")) {
+						
+						artOb.setArticleAbstract(elem.getTextContent());
+					}
+					else if (elem.getAttribute("name").equals("ArticleWordCount")) {
+						
+						artOb.setTextWordCount(Integer.parseInt(elem.getTextContent()));
+					}
+					else if (elem.getAttribute("name").equals("ArticleText")) {
 
 						String article = replaceCharact(elem.getTextContent());
-						// System.out.println("article is:"+ article);
-
-						// System.out.println("size of array: "+this.getWordList(article).size());
 
 						// POS tagger the article text, extract the verb list
 						// and add it to the object;
 						artOb.setVerbList(tagg.getVerbs(tagg.taggIT(article)));
 						artOb.setArticleText(article);
-						artOb.setWordList(this.getWordList(article));
+						artOb.setVerbCount(tagg.getVerbs(tagg.taggIT(article)).size());
 
-					} else if (elem.getAttribute("name").equals(
+					} 
+					else if (elem.getAttribute("name").equals("PageLable")) {
+						artOb.setPage(Integer.parseInt(elem.getTextContent()));
+					}
+
+					else if (elem.getAttribute("name").equals(
 							"PublicationTitle")) {
 						artOb.setPublicationTitle(elem.getTextContent());
 
@@ -114,15 +133,8 @@ public class DataManager {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					} else if (elem.getAttribute("name").equals("ArticleID")) {
-						artOb.setArticleID(elem.getTextContent());
-					} else if (elem.getAttribute("name").equals("Page")) {
-						artOb.setPage(Integer.parseInt(elem.getTextContent()));
-					}
+					} 
 
-					// add to array of article objects
-
-					// System.out.println(array.get(i).toString());
 
 				}
 
@@ -130,12 +142,14 @@ public class DataManager {
 
 			//
 			// System.out.println(artOb.toString());
-			array.add(artOb);
+			//array.add(artOb);
 			// System.out.println("Node Name =" + tempNode.getNodeName() +
 			// " end");
 			// System.out.println("count: "+count);
+			//return artOb;
 
 		}
+		return artOb;
 
 	}
 
@@ -145,14 +159,14 @@ public class DataManager {
 
 	}
 
-	public ArrayList<String> getWordList(String text) {
+	/*public ArrayList<String> getWordList(String text) {
 		ArrayList<String> wordsList = new ArrayList<String>();
 		for (String word : text.split("\\W")) {
 			wordsList.add(word);
 		}
 
 		return wordsList;
-	}
+	}*/
 
 	public Date transformToDate(String date) throws ParseException {
 		// String beforeT = date.split("T")[0];
@@ -184,7 +198,4 @@ public class DataManager {
 
 	}
 
-	public void checkIfSameArticle() {
-
-	}
 }
