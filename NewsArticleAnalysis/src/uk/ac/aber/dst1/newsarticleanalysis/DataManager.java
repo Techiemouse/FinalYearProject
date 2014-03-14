@@ -2,10 +2,12 @@ package uk.ac.aber.dst1.newsarticleanalysis;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,7 +23,7 @@ import org.xml.sax.SAXException;
 public class DataManager {
 	// ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
 	DatabaseSetup database = new DatabaseSetup();
-
+	Connection db = database.startConnection();
 	public Document buildDom(String input) throws ParserConfigurationException,
 			SAXException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -50,20 +52,36 @@ public class DataManager {
 		if (doc.hasChildNodes()) {
 
 			// getting the list of only the tags with doc in
+			database.createPublicationTable(db);
+			database.createArticleTable(db);			
 			for (int i = 0; i < doc.getElementsByTagName("doc").getLength(); i++) {
 				// database.startConnection();
-				database.addArticleObject(
-						printNote(doc.getElementsByTagName("doc").item(i)),
-						database.startConnection(), searchTerm);
+				try {
+					database.addPublication(
+							printNote(doc.getElementsByTagName("doc").item(i)),
+							db);
+				} catch (DOMException | ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					database.addArticleObject(
+							printNote(doc.getElementsByTagName("doc").item(i)),
+							db, searchTerm);
+				} catch (DOMException | ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 
 			}
-			database.closeConnection(database.startConnection());
+			database.closeConnection(db);
 			// printArray(array);
 		}
 
 	}
 
-	private ArticleObject printNote(Node tempNode) {
+	private ArticleObject printNote(Node tempNode) throws DOMException, ParseException {
 		TaggerVerbs tagg = new TaggerVerbs();
 
 		ArticleObject artOb = new ArticleObject();
@@ -89,11 +107,11 @@ public class DataManager {
 						artOb.setArticleID(elem.getTextContent());
 					} else if (elem.getAttribute("name").equals("ArticleTitle")) {
 
-						artOb.setArticleTitle(elem.getTextContent());
+						artOb.setArticleTitle(replaceCharact(elem.getTextContent()));
 					} else if (elem.getAttribute("name").equals(
 							"ArticleAbstract")) {
 
-						artOb.setArticleAbstract(elem.getTextContent());
+						artOb.setArticleAbstract(replaceCharact(elem.getTextContent()));
 					} else if (elem.getAttribute("name").equals(
 							"ArticleWordCount")) {
 
@@ -110,8 +128,16 @@ public class DataManager {
 						artOb.setVerbCount(tagg.getVerbs(tagg.taggIT(article))
 								.size());
 
-					} else if (elem.getAttribute("name").equals("PageLable")) {
-						artOb.setPage(Integer.parseInt(elem.getTextContent()));
+					} else if (elem.getAttribute("name").equals("PageLabel")) {
+						String page = elem.getTextContent();
+						if (page.contains("[")){
+							page.replace("[", "");
+							page.replace("]", "");
+							artOb.setPage(Integer.parseInt(page));
+						}
+						else{
+						artOb.setPage(Integer.parseInt(page));
+						}
 					}
 
 					else if (elem.getAttribute("name").equals(
@@ -119,16 +145,14 @@ public class DataManager {
 						artOb.setPublicationTitle(elem.getTextContent());
 
 					} else if (elem.getAttribute("name").equals("IssueDate")) {
-						try {
-							artOb.setIssueDate(transformToDate(elem
-									.getTextContent()));
-						} catch (DOMException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						
+							artOb.setIssueDate(this.transformToDate(elem.getTextContent()));
+						
+					}
+					else if (elem.getAttribute("name").equals(
+							"PublicationPID")) {
+						artOb.setPublicationPID(elem.getTextContent());
+
 					}
 
 				}
@@ -149,8 +173,8 @@ public class DataManager {
 	}
 
 	public String replaceCharact(String badText) {
-
-		return badText.replace("\u00c2", "").replace("—", "");
+        String quote="\"";
+		return badText.replace("\u00c2", "").replace("—", "").replace("\"", "\\\\\"").replace("'", "`");
 
 	}
 
@@ -162,12 +186,16 @@ public class DataManager {
 	 * return wordsList; }
 	 */
 
-	public Date transformToDate(String date) throws ParseException {
+	public String transformToDate(String date) throws ParseException {
 		// String beforeT = date.split("T")[0];
+		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date theDate = sdf.parse(date);
-
-		return theDate;
+		Date theTempDate = sdf.parse(date);
+		//java.util.Date theDate = new java.util.Date();
+	SimpleDateFormat second = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		date = second.format(theTempDate);
+		return date;
 
 	}
 

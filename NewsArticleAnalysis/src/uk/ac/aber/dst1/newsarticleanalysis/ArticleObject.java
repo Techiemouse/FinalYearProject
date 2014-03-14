@@ -11,7 +11,7 @@ public class ArticleObject {
 	private String articleAbstract;
 	private int textWordCount;
 	private String articleText;
-	private Date issueDate;
+	private String issueDate;
 	ArrayList<String> verbList = new ArrayList<String>();
 	private int verbCount;
 	private int page;
@@ -24,8 +24,8 @@ public class ArticleObject {
 	public ArticleObject(){
 		
 	}
-	public ArticleObject(Date theDate, String theTitle, String theText, String thePublication, ArrayList<String> theWords ){
-		issueDate = theDate;
+	public ArticleObject(String theTitle, String theText, String thePublication, ArrayList<String> theWords ){
+	
 		articleTitle = theTitle;
 		articleText = theText;
 		publicationTitle = thePublication;
@@ -35,10 +35,10 @@ public class ArticleObject {
 	
 	
 	
-	public Date getIssueDate() {
+	public String getIssueDate() {
 		return issueDate;
 	}
-	public void setIssueDate(Date issueDate) {
+	public void setIssueDate(String issueDate) {
 		this.issueDate = issueDate;
 	}
 	public String getArticleText() {
@@ -136,7 +136,23 @@ public class ArticleObject {
 		this.verbCount = verbCount;
 	}
 
-	
+	public String verbList(ArrayList verbs){
+		verbs = getVerbList();
+		String verbList;
+		StringBuilder stringBuilder = new StringBuilder();
+		if (verbs.size()==0){
+			stringBuilder.append("no verbs");
+		}
+		else{
+		for (int i=0; i<verbs.size();i++){
+			
+			 stringBuilder.append(","+verbs.get(i));
+			
+		}
+		}
+		
+		return verbList=stringBuilder.toString();
+	}
 	
 	
 }
