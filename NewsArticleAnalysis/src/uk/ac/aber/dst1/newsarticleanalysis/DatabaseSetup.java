@@ -63,12 +63,12 @@ public class DatabaseSetup {
 			e1.printStackTrace();
 		}
 		String createArticleTable = "CREATE TABLE IF NOT EXISTS article "
-				+ "(id VARCHAR(255) not NULL, " + " pid VARCHAR(255), "
-				+ " title VARCHAR(255), " + " text VARCHAR(255), "
-				+ " verb_list VARCHAR(255), " + " verb_count VARCHAR(255), "
-				+ " word_count VARCHAR(255), " + " abstract VARCHAR(255), "
+				+ "(id VARCHAR(35) not NULL, " + " pid VARCHAR(20), "
+				+ " title VARCHAR(255), " + " text TEXT, "
+				+ " verb_list TEXT, " + " verb_count INTEGER, "
+				+ " word_count INTEGER, " + " abstract VARCHAR(255), "
 				+ " search_term VARCHAR(255), "
-				+ " publication_pid VARCHAR(255), " + " page INTEGER, "
+				+ " publication_pid VARCHAR(20), " + " page INTEGER, "
 				+ " domain VARCHAR(255), " + " PRIMARY KEY ( article_id ))"
 				+ "FOREIGN KEY (publication_id) REFERENCES publication(id)";
 		try {
@@ -91,10 +91,10 @@ public class DatabaseSetup {
 			e1.printStackTrace();
 		}
 		String createPublicationTable = "CREATE TABLE IF NOT EXISTS publication"
-				+ "(id VARCHAR(255), "
-				+ " title VARCHAR(255), "
+				+ "(id VARCHAR(20), "
+				+ " title VARCHAR(150), "
 				+ " issue_date DATE, "
-				+ " region VARCHAR(255), "
+				+ " region VARCHAR(50), "
 				+ " PRIMARY KEY (id ))";
 		try {
 			stmt.executeUpdate(createPublicationTable);
