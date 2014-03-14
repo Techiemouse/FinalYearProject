@@ -33,11 +33,11 @@ public class URLConnectionReader extends Authenticator {
 	public void getArticle(String searchTerm, int rows) throws Exception {
 		// Sets the authenticator that will be used by the networking code
 		// when a proxy or an HTTP server asks for authentication.
-
+		
 		Authenticator.setDefault(new URLConnectionReader());
 
 		URL news = new URL(
-				"http://hacathon.llgc.org.uk/solr/select/?q=ArticleSubject:News%20AND%20ArticleTitle:"
+				"http://hacathon.llgc.org.uk/solr/select/?q=ArticleSubject:News%20AND%20ArticleText:"
 						+ searchTerm + "&rows=" + rows);
 		URLConnection yc = news.openConnection();
 
