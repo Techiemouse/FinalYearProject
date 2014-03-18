@@ -63,15 +63,16 @@ public class DatabaseSetup {
 		}
 		String createArticleTable = "CREATE TABLE IF NOT EXISTS article"
 				+ "("
-				+ "id VARCHAR(35) NOT NULL, " + " pid VARCHAR(20), "
+				+ "id INT NOT NULL AUTO_INCREMENT,"+ "couchdbid VARCHAR(35), " + " pid VARCHAR(20), "
 				+ " title VARCHAR(255), " + " text TEXT, "
 				+ " verb_list TEXT, " + " verb_count SMALLINT, "
 				+ " word_count SMALLINT, " + " abstract VARCHAR(255), "
 				+ " search_term VARCHAR(255), "
 				+ " publication_id VARCHAR(20), " + " page TINYINT, "
 				+ " domain VARCHAR(255), " + " PRIMARY KEY (id), "
-				+ "FOREIGN KEY (publication_id) REFERENCES publication(id)"
-				+ "  ) ";
+				+ "UNIQUE KEY (couchdbid),"
+				+ "FOREIGN KEY (publication_id) REFERENCES publication(pid)"
+				+ " )";
 		try {
 			stmt.executeUpdate(createArticleTable);
 		} catch (SQLException e) {
@@ -92,11 +93,14 @@ public class DatabaseSetup {
 			e1.printStackTrace();
 		}
 		String createPublicationTable = "CREATE TABLE IF NOT EXISTS publication"
-				+ "(id VARCHAR(20), "
+				+ "("
+				+ " id INT NOT NULL AUTO_INCREMENT,"
+				+ " pid VARCHAR(20), "
 				+ " title VARCHAR(150), "
 				+ " issue_date DATETIME, "
 				+ " region VARCHAR(50), "
-				+ " PRIMARY KEY (id))";
+				+ " PRIMARY KEY (id),"
+				+ " UNIQUE KEY (pid))";
 		try {
 			stmt.executeUpdate(createPublicationTable);
 		} catch (SQLException e) {
@@ -116,7 +120,7 @@ public class DatabaseSetup {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String addObject = "INSERT INTO article (id, pid, title, text, verb_list, verb_count, word_count, abstract, search_term, publication_id, page)"
+		String addObject = "INSERT INTO article (couchdbid, pid, title, text, verb_list, verb_count, word_count, abstract, search_term, publication_id,  page)"
 				+ "VALUES ('"
 				+ artObj.getArticleID()
 				+ "','"
@@ -140,7 +144,7 @@ public class DatabaseSetup {
 				+ "','"
 				+ artObj.getPage()
 				+ "')"
-				+ "ON DUPLICATE KEY UPDATE search_term = CONCAT(search_term,'"
+				+ "ON DUPLICATE KEY UPDATE search_term = CONCAT(search_term,' " 
 				+ searchT+"')";
 				
 		try {
@@ -160,7 +164,7 @@ public class DatabaseSetup {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String addPublication = "INSERT INTO publication (id, title, issue_date, region)"
+		String addPublication = "INSERT INTO publication (pid, title, issue_date, region)"
 				+ "VALUES ('"
 				+ artObj.getPublicationPID()
 				+ "','"
@@ -170,7 +174,7 @@ public class DatabaseSetup {
 				+ "','" 
 				+ artObj.getRegion() 
 				+ "')"
-				+ "ON DUPLICATE KEY UPDATE id=id";
+				+ "ON DUPLICATE KEY UPDATE pid=pid";
 		try {
 			stmt.executeUpdate(addPublication);
 		} catch (SQLException e) {

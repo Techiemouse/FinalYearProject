@@ -4,7 +4,7 @@ public class Main {
 	
 	 public static void main(String[] args) throws Exception {
 		 String searchTerm = "crime";
-			int rows=10;
+			int rows=5;
 		URLConnectionReader urlConnect = new URLConnectionReader();	 
 		//urlConnect.searchArticles();
 		urlConnect.getArticle(searchTerm, rows);

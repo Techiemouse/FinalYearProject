@@ -9,6 +9,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.w3c.dom.Document;
+
 public class URLConnectionReader extends Authenticator {
 
 	static String xmls = "";
@@ -51,9 +53,10 @@ public class URLConnectionReader extends Authenticator {
 
 		}
 		xmls = sb.toString();
-		dataManager.buildDom(xmls);
+		
+		Document doc = dataManager.buildDom(xmls);
 
-		dataManager.parsingTheXML(dataManager.buildDom(xmls), searchTerm);
+		dataManager.parsingTheXML(doc, searchTerm);
 
 		in.close();
 	}

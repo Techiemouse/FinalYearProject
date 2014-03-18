@@ -24,6 +24,7 @@ public class DataManager {
 	// ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
 	DatabaseSetup database = new DatabaseSetup();
 	Connection db = database.startConnection();
+
 	public Document buildDom(String input) throws ParserConfigurationException,
 			SAXException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -53,26 +54,25 @@ public class DataManager {
 
 			// getting the list of only the tags with doc in
 			database.createPublicationTable(db);
-			database.createArticleTable(db);			
+			database.createArticleTable(db);
 			for (int i = 0; i < doc.getElementsByTagName("doc").getLength(); i++) {
 				// database.startConnection();
 				try {
 					database.addPublication(
-							printNote(doc.getElementsByTagName("doc").item(i)),
-							db);
+							printNote(doc.getElementsByTagName("doc").item(i),
+									"publication"), db);
 				} catch (DOMException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
 					database.addArticleObject(
-							printNote(doc.getElementsByTagName("doc").item(i)),
-							db, searchTerm);
+							printNote(doc.getElementsByTagName("doc").item(i),
+									"article"), db, searchTerm);
 				} catch (DOMException | ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
 
 			}
 			database.closeConnection(db);
@@ -81,7 +81,8 @@ public class DataManager {
 
 	}
 
-	private ArticleObject printNote(Node tempNode) throws DOMException, ParseException {
+	private ArticleObject printNote(Node tempNode, String option)
+			throws DOMException, ParseException {
 		TaggerVerbs tagg = new TaggerVerbs();
 
 		ArticleObject artOb = new ArticleObject();
@@ -93,66 +94,84 @@ public class DataManager {
 			// System.out.println("count child =" + articleNodes.getLength());
 
 			for (int count = 0; count < articleNodes.getLength(); count++) {
-				// System.out.println("article node: "+count);
+
 				if (articleNodes.item(count).hasAttributes()) {
 
 					Element elem = (Element) articleNodes.item(count);
-					if (elem.getAttribute("name").equals("PID")) {
+					/******  If adding  Article *****/
+					if (option == "article") {
 
-						artOb.setPID(elem.getTextContent());
-					} else if (elem.getAttribute("name").equals("Region")) {
+						if (elem.getAttribute("name").equals("PID")) {
 
-						artOb.setRegion(elem.getTextContent());
-					} else if (elem.getAttribute("name").equals("ArticleID")) {
-						artOb.setArticleID(elem.getTextContent());
-					} else if (elem.getAttribute("name").equals("ArticleTitle")) {
+							artOb.setPID(elem.getTextContent());
+						} else if (elem.getAttribute("name")
+								.equals("ArticleID")) {
+							artOb.setArticleID(elem.getTextContent());
+						} else if (elem.getAttribute("name").equals(
+								"ArticleTitle")) {
 
-						artOb.setArticleTitle(replaceCharact(elem.getTextContent()));
-					} else if (elem.getAttribute("name").equals(
-							"ArticleAbstract")) {
+							artOb.setArticleTitle(replaceCharact(elem
+									.getTextContent()));
+						} else if (elem.getAttribute("name").equals(
+								"ArticleAbstract")) {
 
-						artOb.setArticleAbstract(replaceCharact(elem.getTextContent()));
-					} else if (elem.getAttribute("name").equals(
-							"ArticleWordCount")) {
+							artOb.setArticleAbstract(replaceCharact(elem
+									.getTextContent()));
+						} else if (elem.getAttribute("name").equals(
+								"ArticleWordCount")) {
 
-						artOb.setTextWordCount(Integer.parseInt(elem
-								.getTextContent()));
-					} else if (elem.getAttribute("name").equals("ArticleText")) {
+							artOb.setTextWordCount(Integer.parseInt(elem
+									.getTextContent()));
+						} else if (elem.getAttribute("name").equals(
+								"ArticleText")) {
 
-						String article = replaceCharact(elem.getTextContent());
+							String article = replaceCharact(elem
+									.getTextContent());
 
-						// POS tagger the article text, extract the verb list
-						// and add it to the object;
-						artOb.setVerbList(tagg.getVerbs(tagg.taggIT(article)));
-						artOb.setArticleText(article);
-						artOb.setVerbCount(tagg.getVerbs(tagg.taggIT(article))
-								.size());
+							ArrayList<String> lemmas = tagg.lemmVerbs(tagg
+									.taggIT(article));
+							artOb.setVerbList(lemmas);
+							artOb.setArticleText(article);
+							artOb.setVerbCount(lemmas.size());
 
-					} else if (elem.getAttribute("name").equals("PageLabel")) {
-						String page = elem.getTextContent();
-						if (page.contains("[")){
-							page.replace("[", "");
-							page.replace("]", "");
-							artOb.setPage(Integer.parseInt(page));
+						}else if (elem.getAttribute("name")
+								.equals("PageLabel")) {
+							String page = elem.getTextContent();
+							if (page.contains("[")) {
+								page = page.replace("[", "");
+								page = page.replace("]", "");
+								artOb.setPage(Integer.parseInt(page));
+							} else {
+								artOb.setPage(Integer.parseInt(page));
+							}
 						}
-						else{
-						artOb.setPage(Integer.parseInt(page));
+
+						else if (elem.getAttribute("name").equals(
+								"PublicationPID")) {
+							artOb.setPublicationPID(elem.getTextContent());
+
 						}
-					}
+						/******  If adding Publication *****/
+					} else if (option == "publication") {
+						if (elem.getAttribute("name").equals("Region")) {
 
-					else if (elem.getAttribute("name").equals(
-							"PublicationTitle")) {
-						artOb.setPublicationTitle(elem.getTextContent());
+							artOb.setRegion(elem.getTextContent());
+						} 
+						else if (elem.getAttribute("name").equals(
+								"PublicationTitle")) {
+							artOb.setPublicationTitle(elem.getTextContent());
 
-					} else if (elem.getAttribute("name").equals("IssueDate")) {
-						
-							artOb.setIssueDate(this.transformToDate(elem.getTextContent()));
-						
-					}
-					else if (elem.getAttribute("name").equals(
-							"PublicationPID")) {
-						artOb.setPublicationPID(elem.getTextContent());
+						} else if (elem.getAttribute("name")
+								.equals("IssueDate")) {
 
+							artOb.setIssueDate(this.transformToDate(elem
+									.getTextContent()));
+
+						} else if (elem.getAttribute("name").equals(
+								"PublicationPID")) {
+							artOb.setPublicationPID(elem.getTextContent());
+
+						}
 					}
 
 				}
