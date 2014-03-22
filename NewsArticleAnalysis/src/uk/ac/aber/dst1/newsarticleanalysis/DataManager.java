@@ -1,5 +1,10 @@
 package uk.ac.aber.dst1.newsarticleanalysis;
 
+/**
+ * @author Diana Silvia Teodorescu
+ *
+ */
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Connection;
@@ -21,10 +26,17 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DataManager {
-	// ArrayList<ArticleObject> array = new ArrayList<ArticleObject>();
+	
 	DatabaseSetup database = new DatabaseSetup();
 	Connection db = database.startConnection();
-
+/**
+ * 
+ * @param input the variable is given by the XML result
+ * @return doc - The method returns the DOM document built from the string of the XML
+ * @throws ParserConfigurationException
+ * @throws SAXException
+ * @throws IOException
+ */
 	public Document buildDom(String input) throws ParserConfigurationException,
 			SAXException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -35,19 +47,26 @@ public class DataManager {
 
 		return doc;
 	}
-
+/**
+ * 
+ * @param doc The variable is the DOM document that contains the nodes of the initial XML result
+ * @return the number of results found for that query
+ */
 	public int getNumFound(Document doc) {
 		int numFound;
 		// getting the result tag to find how many results the query finds
 		NodeList nodes = doc.getElementsByTagName("result");
 		Element result = (Element) nodes.item(0);
 
-		// System.out.println("the number is: "+result.getAttribute("numFound"));
 		numFound = Integer.parseInt(result.getAttribute("numFound"));
 		return numFound;
 
 	}
-
+/**
+ * 
+ * @param doc 
+ * @param searchTerm
+ */
 	public void parsingTheXML(Document doc, String searchTerm) {
 
 		if (doc.hasChildNodes()) {
@@ -91,14 +110,12 @@ public class DataManager {
 
 			// get node name and value
 			NodeList articleNodes = tempNode.getChildNodes();
-			// System.out.println("count child =" + articleNodes.getLength());
-
 			for (int count = 0; count < articleNodes.getLength(); count++) {
 
 				if (articleNodes.item(count).hasAttributes()) {
 
 					Element elem = (Element) articleNodes.item(count);
-					/******  If adding  Article *****/
+					/****** If adding Article *****/
 					if (option == "article") {
 
 						if (elem.getAttribute("name").equals("PID")) {
@@ -129,12 +146,12 @@ public class DataManager {
 									.getTextContent());
 
 							ArrayList<String> lemmas = tagg.lemmVerbs(tagg
-									.taggIT(article));
+									.taggIT(article, "verbs"));
 							artOb.setVerbList(lemmas);
 							artOb.setArticleText(article);
 							artOb.setVerbCount(lemmas.size());
 
-						}else if (elem.getAttribute("name")
+						} else if (elem.getAttribute("name")
 								.equals("PageLabel")) {
 							String page = elem.getTextContent();
 							if (page.contains("[")) {
@@ -151,13 +168,12 @@ public class DataManager {
 							artOb.setPublicationPID(elem.getTextContent());
 
 						}
-						/******  If adding Publication *****/
+						/****** If adding Publication *****/
 					} else if (option == "publication") {
 						if (elem.getAttribute("name").equals("Region")) {
 
 							artOb.setRegion(elem.getTextContent());
-						} 
-						else if (elem.getAttribute("name").equals(
+						} else if (elem.getAttribute("name").equals(
 								"PublicationTitle")) {
 							artOb.setPublicationTitle(elem.getTextContent());
 
@@ -178,13 +194,6 @@ public class DataManager {
 
 			}
 
-			//
-			// System.out.println(artOb.toString());
-			// array.add(artOb);
-			// System.out.println("Node Name =" + tempNode.getNodeName() +
-			// " end");
-			// System.out.println("count: "+count);
-			// return artOb;
 
 		}
 		return artOb;
@@ -192,8 +201,9 @@ public class DataManager {
 	}
 
 	public String replaceCharact(String badText) {
-        String quote="\"";
-		return badText.replace("\u00c2", "").replace("—", "").replace("\"", "\\\\\"").replace("'", "`");
+		
+		return badText.replace("\u00c2", "").replace("—", "")
+				.replace("\"", "\\\\\"").replace("'", "`");
 
 	}
 
@@ -206,13 +216,12 @@ public class DataManager {
 	 */
 
 	public String transformToDate(String date) throws ParseException {
-		// String beforeT = date.split("T")[0];
-		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date theTempDate = sdf.parse(date);
-		//java.util.Date theDate = new java.util.Date();
-	SimpleDateFormat second = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
+		SimpleDateFormat second = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 		date = second.format(theTempDate);
 		return date;
 
@@ -220,9 +229,9 @@ public class DataManager {
 
 	public void printArray(ArrayList<ArticleObject> array) {
 
-		// for(int i = 0; i < array.size(); i++) {
+		for(int i = 0; i < array.size(); i++) {
 		System.out.println("done: " + array.size());
-		// }
+		}
 	}
 
 	public void appentArticles() {

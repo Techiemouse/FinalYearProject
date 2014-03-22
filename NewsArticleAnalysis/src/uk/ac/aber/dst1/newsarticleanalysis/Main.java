@@ -1,12 +1,20 @@
 package uk.ac.aber.dst1.newsarticleanalysis;
 
+/**
+ * @author Diana Silvia Teodorescu
+ *
+ */
 public class Main {
-	
-	 public static void main(String[] args) throws Exception {
-		 String searchTerm = "crime";
-			int rows=5;
-		URLConnectionReader urlConnect = new URLConnectionReader();	 
-		//urlConnect.searchArticles();
+/**
+ * Main method that calls the connection
+ * @param args
+ * @throws Exception
+ */
+	public static void main(String[] args) throws Exception {
+		String searchTerm = "crime";
+		int rows = 5;
+		URLConnectionReader urlConnect = new URLConnectionReader();
+		// urlConnect.searchArticles();
 		urlConnect.getArticle(searchTerm, rows);
-	 }
+	}
 }

@@ -1,5 +1,11 @@
 package uk.ac.aber.dst1.newsarticleanalysis;
 
+/**
+ * @author Diana Silvia Teodorescu
+ *
+ */
+
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -25,8 +31,6 @@ public class DatabaseSetup {
 			System.out.println("Connecting to a selected database...");
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
 			System.out.println("Connected database successfully...");
-
-
 
 		} catch (SQLException se) {
 			// Handle errors for JDBC
@@ -61,13 +65,12 @@ public class DatabaseSetup {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String createArticleTable = "CREATE TABLE IF NOT EXISTS article"
-				+ "("
-				+ "id INT NOT NULL AUTO_INCREMENT,"+ "couchdbid VARCHAR(35), " + " pid VARCHAR(20), "
-				+ " title VARCHAR(255), " + " text TEXT, "
-				+ " verb_list TEXT, " + " verb_count SMALLINT, "
-				+ " word_count SMALLINT, " + " abstract VARCHAR(255), "
-				+ " search_term VARCHAR(255), "
+		String createArticleTable = "CREATE TABLE IF NOT EXISTS article" + "("
+				+ "id INT NOT NULL AUTO_INCREMENT," + "couchdbid VARCHAR(35), "
+				+ " pid VARCHAR(20), " + " title VARCHAR(255), "
+				+ " text TEXT, " + " verb_list TEXT, "
+				+ " verb_count SMALLINT, " + " word_count SMALLINT, "
+				+ " abstract VARCHAR(255), " + " search_term VARCHAR(255), "
 				+ " publication_id VARCHAR(20), " + " page TINYINT, "
 				+ " domain VARCHAR(255), " + " PRIMARY KEY (id), "
 				+ "UNIQUE KEY (couchdbid),"
@@ -99,8 +102,7 @@ public class DatabaseSetup {
 				+ " title VARCHAR(150), "
 				+ " issue_date DATETIME, "
 				+ " region VARCHAR(50), "
-				+ " PRIMARY KEY (id),"
-				+ " UNIQUE KEY (pid))";
+				+ " PRIMARY KEY (id)," + " UNIQUE KEY (pid))";
 		try {
 			stmt.executeUpdate(createPublicationTable);
 		} catch (SQLException e) {
@@ -109,7 +111,159 @@ public class DatabaseSetup {
 		}
 
 	}
+	
+	
+	public void createVerbTable(Connection conn) {
 
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String createVerbTable = "CREATE TABLE IF NOT EXISTS verb"
+				+ "("
+				+ " id INT NOT NULL AUTO_INCREMENT,"			
+				+ " name VARCHAR(150), "
+				+ " PRIMARY KEY (id)),";
+		try {
+			stmt.executeUpdate(createVerbTable);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	public void createArticleVerbs(Connection conn) {
+
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String createVerbTable = "CREATE TABLE IF NOT EXISTS articleverbs"
+				+ "("
+				+ " article_id INT NOT NULL AUTO_INCREMENT,"			
+				+ " verb_id VARCHAR(150), "
+				+ " PRIMARY KEY (id),"
+				+ " FOREIGN KEY (verb_id) REFERENCES verb(id)"
+				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
+				+ " )";
+		try {
+			stmt.executeUpdate(createVerbTable);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void createNounTable(Connection conn) {
+
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String createNounTable = "CREATE TABLE IF NOT EXISTS noun"
+				+ "("
+				+ " id INT NOT NULL AUTO_INCREMENT,"			
+				+ " name VARCHAR(150), "
+				+ " PRIMARY KEY (id)),";
+		try {
+			stmt.executeUpdate(createNounTable);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	public void createArticleNouns(Connection conn) {
+
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String createArticleNouns = "CREATE TABLE IF NOT EXISTS articlenouns"
+				+ "("
+				+ " article_id INT NOT NULL AUTO_INCREMENT,"			
+				+ " noun_id VARCHAR(150), "
+				+ " PRIMARY KEY (id),"
+				+ " FOREIGN KEY (noun_id) REFERENCES noun(id)"
+				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
+				+ " )";
+		try {
+			stmt.executeUpdate(createArticleNouns);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+	public void createDomainTable(Connection conn) {
+
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String createDomainTable = "CREATE TABLE IF NOT EXISTS domain"
+				+ "("
+				+ " id INT NOT NULL AUTO_INCREMENT,"			
+				+ " name VARCHAR(150), "
+				+ " PRIMARY KEY (id)),";
+		try {
+			stmt.executeUpdate(createDomainTable);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	public void createArticleDomains(Connection conn) {
+
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String createArticleDomains = "CREATE TABLE IF NOT EXISTS articledomains"
+				+ "("
+				+ " article_id INT NOT NULL AUTO_INCREMENT,"			
+				+ " domain_id VARCHAR(150), "
+				+ " PRIMARY KEY (id),"
+				+ " FOREIGN KEY (domain_id) REFERENCES domain(id)"
+				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
+				+ " )";
+		try {
+			stmt.executeUpdate(createArticleDomains);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void addArticleObject(ArticleObject artObj, Connection conn,
 			String searchT) {
 		Statement stmt = null;
@@ -144,9 +298,9 @@ public class DatabaseSetup {
 				+ "','"
 				+ artObj.getPage()
 				+ "')"
-				+ "ON DUPLICATE KEY UPDATE search_term = CONCAT(search_term,' " 
-				+ searchT+"')";
-				
+				+ "ON DUPLICATE KEY UPDATE search_term = CONCAT(search_term,' "
+				+ searchT + "')";
+
 		try {
 			stmt.executeUpdate(addObject);
 		} catch (SQLException e) {
@@ -164,6 +318,7 @@ public class DatabaseSetup {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		//if !pid = art.Obj.getPublicationTitle insert
 		String addPublication = "INSERT INTO publication (pid, title, issue_date, region)"
 				+ "VALUES ('"
 				+ artObj.getPublicationPID()
@@ -171,8 +326,8 @@ public class DatabaseSetup {
 				+ artObj.getPublicationTitle()
 				+ "','"
 				+ artObj.getIssueDate()
-				+ "','" 
-				+ artObj.getRegion() 
+				+ "','"
+				+ artObj.getRegion()
 				+ "')"
 				+ "ON DUPLICATE KEY UPDATE pid=pid";
 		try {
