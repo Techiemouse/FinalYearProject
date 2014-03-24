@@ -8,6 +8,7 @@ package uk.ac.aber.dst1.newsarticleanalysis;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,14 +67,19 @@ public class DataManager {
  * 
  * @param doc 
  * @param searchTerm
+ * @throws SQLException 
  */
-	public void parsingTheXML(Document doc, String searchTerm) {
+	public void parsingTheXML(Document doc, String searchTerm) throws SQLException {
 
 		if (doc.hasChildNodes()) {
 
 			// getting the list of only the tags with doc in
 			database.createPublicationTable(db);
 			database.createArticleTable(db);
+			//database.createNounTable(db);
+			//database.createArticleNouns(db);
+			//database.createVerbTable(db);
+			//database.createArticleVerbs(db);
 			for (int i = 0; i < doc.getElementsByTagName("doc").getLength(); i++) {
 				// database.startConnection();
 				try {
@@ -92,6 +98,7 @@ public class DataManager {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 
 			}
 			database.closeConnection(db);
@@ -145,11 +152,15 @@ public class DataManager {
 							String article = replaceCharact(elem
 									.getTextContent());
 
-							ArrayList<String> lemmas = tagg.lemmVerbs(tagg
+							ArrayList<String> vLemmas = tagg.lemmAttributes(tagg
 									.taggIT(article, "verbs"));
-							artOb.setVerbList(lemmas);
+							artOb.setVerbList(vLemmas);
+							artOb.setVerbCount(vLemmas.size());
+							ArrayList<String> nLemmas = tagg.lemmAttributes(tagg
+									.taggIT(article, "nouns"));
+							artOb.setNounList(nLemmas);
+							artOb.setNounCount(nLemmas.size());
 							artOb.setArticleText(article);
-							artOb.setVerbCount(lemmas.size());
 
 						} else if (elem.getAttribute("name")
 								.equals("PageLabel")) {

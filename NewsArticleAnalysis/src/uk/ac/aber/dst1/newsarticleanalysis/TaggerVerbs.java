@@ -64,24 +64,24 @@ public class TaggerVerbs {
 		return attributeString.toString();
 	}
 
-	public ArrayList<String> lemmVerbs(String verbsString) {
-		ArrayList<String> verbList = new ArrayList<String>();
+	public ArrayList<String> lemmAttributes(String attributeString) {
+		ArrayList<String> attributeList = new ArrayList<String>();
 		Properties props = new Properties();
 		props.put("annotators", "tokenize, ssplit, pos, lemma");
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props, false);
 
-		Annotation document = pipeline.process(verbsString);
+		Annotation document = pipeline.process(attributeString);
 		for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
 			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
 				// String word = token.get(TextAnnotation.class);
 				String lemma = token.get(LemmaAnnotation.class);
 				System.out.println("lemmatized version :" + lemma);
-				verbList.add(lemma);
+				attributeList.add(lemma);
 
 			}
 
 		}
-		return verbList;
+		return attributeList;
 	}
 
 }

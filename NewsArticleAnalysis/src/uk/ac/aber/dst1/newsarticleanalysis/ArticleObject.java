@@ -1,7 +1,7 @@
 package uk.ac.aber.dst1.newsarticleanalysis;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 
 public class ArticleObject {
 	private String pID;
@@ -13,8 +13,10 @@ public class ArticleObject {
 	private String articleText;
 	private String issueDate;
 	ArrayList<String> verbList = new ArrayList<String>();
+	ArrayList<String> nounList = new ArrayList<String>();
 	private int verbCount;
 	private int page;
+	private int nounCount;
 	private String publicationTitle;
 	private String publicationPID;
 	private String domain;
@@ -32,9 +34,7 @@ public class ArticleObject {
 	
 		
 	}
-	
-	
-	
+
 	public String getIssueDate() {
 		return issueDate;
 	}
@@ -136,22 +136,34 @@ public class ArticleObject {
 		this.verbCount = verbCount;
 	}
 
-	public String verbList(ArrayList verbs){
-		verbs = getVerbList();
-		String verbList;
+	public ArrayList<String> getNounList() {
+		return nounList;
+	}
+	public void setNounList(ArrayList<String> nounList) {
+		this.nounList = nounList;
+	}
+	public int getNounCount() {
+		return nounCount;
+	}
+	public void setNounCount(int nounCount) {
+		this.nounCount = nounCount;
+	}
+	public String attributeList(ArrayList<String> attribute){
+		attribute = getVerbList();
+	
 		StringBuilder stringBuilder = new StringBuilder();
-		if (verbs.size()==0){
+		if (attribute.size()==0){
 			stringBuilder.append("no verbs");
 		}
 		else{
-		for (int i=0; i<verbs.size();i++){
+		for (int i=0; i<attribute.size();i++){
 			
-			 stringBuilder.append(","+verbs.get(i));
+			 stringBuilder.append(","+attribute.get(i));
 			
 		}
 		}
 		
-		return verbList=stringBuilder.toString();
+		return stringBuilder.toString();
 	}
 	
 	

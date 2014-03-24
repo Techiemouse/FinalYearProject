@@ -8,8 +8,10 @@ package uk.ac.aber.dst1.newsarticleanalysis;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class DatabaseSetup {
 	ArticleObject artObj = new ArticleObject();
@@ -68,16 +70,17 @@ public class DatabaseSetup {
 		String createArticleTable = "CREATE TABLE IF NOT EXISTS article" + "("
 				+ "id INT NOT NULL AUTO_INCREMENT," + "couchdbid VARCHAR(35), "
 				+ " pid VARCHAR(20), " + " title VARCHAR(255), "
-				+ " text TEXT, " + " verb_list TEXT, "
-				+ " verb_count SMALLINT, " + " word_count SMALLINT, "
+				+ " text TEXT, " + " verb_list TEXT, "+ " noun_list TEXT, "
+				+ " verb_count SMALLINT, "+ " noun_count SMALLINT, " + " word_count SMALLINT, "
 				+ " abstract VARCHAR(255), " + " search_term VARCHAR(255), "
-				+ " publication_id VARCHAR(20), " + " page TINYINT, "
+				+ " publication_id INT, " + " page TINYINT, "
 				+ " domain VARCHAR(255), " + " PRIMARY KEY (id), "
 				+ "UNIQUE KEY (couchdbid),"
-				+ "FOREIGN KEY (publication_id) REFERENCES publication(pid)"
+				+ "FOREIGN KEY (publication_id) REFERENCES publication(id)"
 				+ " )";
 		try {
 			stmt.executeUpdate(createArticleTable);
+			System.out.println("article table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -102,9 +105,10 @@ public class DatabaseSetup {
 				+ " title VARCHAR(150), "
 				+ " issue_date DATETIME, "
 				+ " region VARCHAR(50), "
-				+ " PRIMARY KEY (id)," + " UNIQUE KEY (pid))";
+				+ " PRIMARY KEY (id))";
 		try {
 			stmt.executeUpdate(createPublicationTable);
+			System.out.println("publication table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,9 +131,10 @@ public class DatabaseSetup {
 				+ "("
 				+ " id INT NOT NULL AUTO_INCREMENT,"			
 				+ " name VARCHAR(150), "
-				+ " PRIMARY KEY (id)),";
+				+ " PRIMARY KEY (id))";
 		try {
 			stmt.executeUpdate(createVerbTable);
+			System.out.println("verb table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -148,14 +153,15 @@ public class DatabaseSetup {
 		}
 		String createVerbTable = "CREATE TABLE IF NOT EXISTS articleverbs"
 				+ "("
-				+ " article_id INT NOT NULL AUTO_INCREMENT,"			
-				+ " verb_id VARCHAR(150), "
-				+ " PRIMARY KEY (id),"
-				+ " FOREIGN KEY (verb_id) REFERENCES verb(id)"
+				+ " article_id INT,"			
+				+ " verb_id INT, "
+				+ " PRIMARY KEY (article_id, verb_id),"
+				+ " FOREIGN KEY (verb_id) REFERENCES verb(id),"
 				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
 				+ " )";
 		try {
 			stmt.executeUpdate(createVerbTable);
+			System.out.println("articleverbs table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -176,10 +182,11 @@ public class DatabaseSetup {
 		String createNounTable = "CREATE TABLE IF NOT EXISTS noun"
 				+ "("
 				+ " id INT NOT NULL AUTO_INCREMENT,"			
-				+ " name VARCHAR(150), "
-				+ " PRIMARY KEY (id)),";
+				+ " name VARCHAR(150),"
+				+ " PRIMARY KEY (id))";
 		try {
 			stmt.executeUpdate(createNounTable);
+			System.out.println("noun table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -198,14 +205,15 @@ public class DatabaseSetup {
 		}
 		String createArticleNouns = "CREATE TABLE IF NOT EXISTS articlenouns"
 				+ "("
-				+ " article_id INT NOT NULL AUTO_INCREMENT,"			
-				+ " noun_id VARCHAR(150), "
-				+ " PRIMARY KEY (id),"
-				+ " FOREIGN KEY (noun_id) REFERENCES noun(id)"
+				+ " article_id INT,"			
+				+ " noun_id INT, "
+				+ " PRIMARY KEY (article_id, noun_id),"			
+				+ " FOREIGN KEY (noun_id) REFERENCES noun(id),"
 				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
 				+ " )";
 		try {
 			stmt.executeUpdate(createArticleNouns);
+			System.out.println("articlenouns table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -251,8 +259,8 @@ public class DatabaseSetup {
 				+ "("
 				+ " article_id INT NOT NULL AUTO_INCREMENT,"			
 				+ " domain_id VARCHAR(150), "
-				+ " PRIMARY KEY (id),"
-				+ " FOREIGN KEY (domain_id) REFERENCES domain(id)"
+				+ " PRIMARY KEY (article_id, domain_id),"
+				+ " FOREIGN KEY (domain_id) REFERENCES domain(id),"
 				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
 				+ " )";
 		try {
@@ -265,16 +273,23 @@ public class DatabaseSetup {
 	}
 	
 	public void addArticleObject(ArticleObject artObj, Connection conn,
-			String searchT) {
+			String searchT) throws SQLException {
+		Statement state = null;
 		Statement stmt = null;
-
+  
+		String query = "SELECT id FROM publication WHERE pid = '"+artObj.getPublicationPID()+"'";
+		
 		try {
 			stmt = conn.createStatement();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		String addObject = "INSERT INTO article (couchdbid, pid, title, text, verb_list, verb_count, word_count, abstract, search_term, publication_id,  page)"
+			state= conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			System.out.println("adding article "+artObj.getArticleID());
+			
+			while (rs.next()){
+				int theID = rs.getInt("id");
+			
+		System.out.println("adding article with public " +theID);
+		String addObject = "INSERT INTO article (couchdbid, pid, title, text, verb_list, noun_list, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page)"
 				+ "VALUES ('"
 				+ artObj.getArticleID()
 				+ "','"
@@ -284,9 +299,13 @@ public class DatabaseSetup {
 				+ "','"
 				+ artObj.getArticleText()
 				+ "','"
-				+ artObj.verbList(artObj.getVerbList())
+				+ artObj.attributeList(artObj.getVerbList())
+				+ "','"
+				+ artObj.attributeList(artObj.getNounList())
 				+ "','"
 				+ artObj.getVerbCount()
+				+ "','"
+				+ artObj.getNounCount()
 				+ "','"
 				+ artObj.getTextWordCount()
 				+ "','"
@@ -294,7 +313,8 @@ public class DatabaseSetup {
 				+ "','"
 				+ searchT
 				+ "','"
-				+ artObj.getPublicationPID()
+				+ theID
+				//+ artObj.getPublicationPID()
 				+ "','"
 				+ artObj.getPage()
 				+ "')"
@@ -302,40 +322,93 @@ public class DatabaseSetup {
 				+ searchT + "')";
 
 		try {
-			stmt.executeUpdate(addObject);
+			state.executeUpdate(addObject);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+			
+			}
+			
+		}
+		finally {
+			if (stmt != null) { 
+				stmt.close(); 
+			}
+		}
+		
+	
 	}
 
-	public void addPublication(ArticleObject artObj, Connection conn) {
+	public void addPublication(ArticleObject artObj, Connection conn) throws SQLException {
 		Statement stmt = null;
-
+		Statement state = null;
+		String query = "SELECT id FROM publication WHERE pid = '"+artObj.getPublicationPID()+"'";
+		
 		try {
 			stmt = conn.createStatement();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			state = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			System.out.println("adding public "+artObj.getPublicationPID());
+			if (rs.next()) {
+				System.out.println("adding public ");
+			}
+			else{
+				String addPublication = "INSERT INTO publication (pid, title, issue_date, region)"
+						+ "VALUES ('"
+						+ artObj.getPublicationPID()
+						+ "','"
+						+ artObj.getPublicationTitle()
+						+ "','"
+						+ artObj.getIssueDate()
+						+ "','"
+						+ artObj.getRegion()
+						+ "')"; 
+				//+ "ON DUPLICATE KEY UPDATE id=id";
+				try {
+					state.executeUpdate(addPublication);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
 		}
-		//if !pid = art.Obj.getPublicationTitle insert
-		String addPublication = "INSERT INTO publication (pid, title, issue_date, region)"
-				+ "VALUES ('"
-				+ artObj.getPublicationPID()
-				+ "','"
-				+ artObj.getPublicationTitle()
-				+ "','"
-				+ artObj.getIssueDate()
-				+ "','"
-				+ artObj.getRegion()
-				+ "')"
-				+ "ON DUPLICATE KEY UPDATE pid=pid";
+
+		finally {
+			if (stmt != null) { 
+				stmt.close(); 
+			}
+		}
+	}
+	
+	public void addVerb(ArticleObject artObj, Connection conn){
+		Statement stmt = null;
 		try {
-			stmt.executeUpdate(addPublication);
+			stmt = conn.createStatement();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ArrayList<String> verbList =  artObj.getVerbList();
+		for (int i=0; i<verbList.size(); i++ ){
+			
+			String addVerb = "INSER INTO verb (name)"
+					+ "VALUES ('"
+					+ artObj.getVerbList().get(i)
+					+"')";
+			try {
+				stmt.executeUpdate(addVerb);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		
+		
 	}
 
 }
