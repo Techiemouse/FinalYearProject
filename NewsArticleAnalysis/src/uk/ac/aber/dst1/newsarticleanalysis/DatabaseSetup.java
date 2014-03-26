@@ -80,7 +80,7 @@ public class DatabaseSetup {
 				+ " )";
 		try {
 			stmt.executeUpdate(createArticleTable);
-			System.out.println("article table done...");
+			//System.out.println("article table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -272,22 +272,34 @@ public class DatabaseSetup {
 
 	}
 	
-	public void addArticleObject(ArticleObject artObj, Connection conn,
+	public int addArticleObject(ArticleObject artObj, Connection conn,
 			String searchT) throws SQLException {
 		Statement state = null;
 		Statement stmt = null;
-  
+		Statement duplicate = null;
+		int theLastID=0;
 		String query = "SELECT id FROM publication WHERE pid = '"+artObj.getPublicationPID()+"'";
-		
+		String checkDuplicate = "SELECT id FROM article WHERE couchdbid = '"+artObj.getArticleID()+"'";
 		try {
 			stmt = conn.createStatement();
 			state= conn.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			System.out.println("adding article "+artObj.getArticleID());
+			duplicate = conn.createStatement();
+			ResultSet qResult = stmt.executeQuery(query);
+			ResultSet checkResult = duplicate.executeQuery(checkDuplicate);
+
+			//System.out.println("adding article "+artObj.getArticleID());
 			
-			while (rs.next()){
-				int theID = rs.getInt("id");
-			
+		while (qResult.next()){
+
+				int theID = qResult.getInt("id");
+			if (checkResult.next()){
+				System.out.println("the duplicate id is"+artObj.getArticleID()+" the pub id " +theID);
+				String concat = "UPDATE article SET search_term = CONCAT(search_term,' "+ searchT + "') WHERE couchdbid = '"+artObj.getArticleID()+"'";
+				state.executeUpdate(concat);
+				
+			}
+			else{
+				
 		System.out.println("adding article with public " +theID);
 		String addObject = "INSERT INTO article (couchdbid, pid, title, text, verb_list, noun_list, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page)"
 				+ "VALUES ('"
@@ -317,18 +329,17 @@ public class DatabaseSetup {
 				//+ artObj.getPublicationPID()
 				+ "','"
 				+ artObj.getPage()
-				+ "')"
-				+ "ON DUPLICATE KEY UPDATE search_term = CONCAT(search_term,' "
-				+ searchT + "')";
+				+ "')";
+				//+ "ON DUPLICATE KEY UPDATE search_term = CONCAT(search_term,' "
+				//+ searchT + "')"
+				//+"SELECT LAST_INSERT_ID ";
 
-		try {
-			state.executeUpdate(addObject);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-			
+		state.executeUpdate(addObject);
+		
+		
 			}
+		}
+		
 			
 		}
 		finally {
@@ -336,7 +347,7 @@ public class DatabaseSetup {
 				stmt.close(); 
 			}
 		}
-		
+		return theLastID;
 	
 	}
 
@@ -349,9 +360,9 @@ public class DatabaseSetup {
 			stmt = conn.createStatement();
 			state = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			System.out.println("adding public "+artObj.getPublicationPID());
+			//System.out.println("adding public "+artObj.getPublicationPID());
 			if (rs.next()) {
-				System.out.println("adding public ");
+				//System.out.println("adding public ");
 			}
 			else{
 				String addPublication = "INSERT INTO publication (pid, title, issue_date, region)"
@@ -381,7 +392,12 @@ public class DatabaseSetup {
 			}
 		}
 	}
-	
+	/*
+	 * creates the id then adds to junction table, article creates id and adds to junction table, 
+	 * put new verb in table - first need to check that name of verb wasn't there already there using verb.name==new verb
+	 * if it is do nothing in the verb table but put into article/verbs only if article id not in the table already in combination with same verb id 
+	 * 
+	 */
 	public void addVerb(ArticleObject artObj, Connection conn){
 		Statement stmt = null;
 		try {
@@ -403,10 +419,34 @@ public class DatabaseSetup {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+		}
 			
 		}
-		
+		public void addNoun(ArticleObject artObj, Connection conn){
+			Statement stmt = null;
+			try {
+				stmt = conn.createStatement();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ArrayList<String> nounList =  artObj.getNounList();
+			for (int i=0; i<nounList.size(); i++ ){
+				
+				String addNoun = "INSER INTO noun (name)"
+						+ "VALUES ('"
+						+ artObj.getNounList().get(i)
+						+"')";
+				try {
+					stmt.executeUpdate(addNoun);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+			
 		
 		
 	}

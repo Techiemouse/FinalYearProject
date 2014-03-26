@@ -69,7 +69,7 @@ public class DataManager {
  * @param searchTerm
  * @throws SQLException 
  */
-	public void parsingTheXML(Document doc, String searchTerm) throws SQLException {
+	public void parsingTheXML(Document doc, String searchTerm) throws SQLException, ParseException {
 
 		if (doc.hasChildNodes()) {
 
@@ -81,20 +81,38 @@ public class DataManager {
 			//database.createVerbTable(db);
 			//database.createArticleVerbs(db);
 			for (int i = 0; i < doc.getElementsByTagName("doc").getLength(); i++) {
+				ArticleObject theArticle = new ArticleObject();
+				ArticleObject thePublication = new ArticleObject();
+				try {
+					thePublication = printNote(doc.getElementsByTagName("doc").item(i),"publication");
+				} catch (DOMException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					theArticle = printNote(doc.getElementsByTagName("doc").item(i),"article");
+				} catch (DOMException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				// database.startConnection();
 				try {
-					database.addPublication(
-							printNote(doc.getElementsByTagName("doc").item(i),
-									"publication"), db);
-				} catch (DOMException | ParseException e) {
+					database.addPublication(thePublication, db);
+				} catch (DOMException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				try {
-					database.addArticleObject(
-							printNote(doc.getElementsByTagName("doc").item(i),
-									"article"), db, searchTerm);
-				} catch (DOMException | ParseException e) {
+					database.addArticleObject(theArticle, db, searchTerm);
+					System.out.println(database.addArticleObject(theArticle, db, searchTerm));
+					//database.addVerb(theArticle, db);
+				} catch (DOMException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -151,16 +169,25 @@ public class DataManager {
 
 							String article = replaceCharact(elem
 									.getTextContent());
-
-							ArrayList<String> vLemmas = tagg.lemmAttributes(tagg
-									.taggIT(article, "verbs"));
+							artOb.setArticleText(article);
+							System.out.println("text is set-up "+article);
+							ArrayList<String> vLemmas =new ArrayList<String>();
+							ArrayList<String> nLemmas =new ArrayList<String>();
+							
+							vLemmas = tagg.lemmAttributes(tagg
+									.taggIT(article, "verb"));
+							
+								
 							artOb.setVerbList(vLemmas);
 							artOb.setVerbCount(vLemmas.size());
-							ArrayList<String> nLemmas = tagg.lemmAttributes(tagg
-									.taggIT(article, "nouns"));
+							System.out.println("verb count"+vLemmas.size());
+							nLemmas = tagg.lemmAttributes(tagg
+									.taggIT(article, "noun"));
+							
 							artOb.setNounList(nLemmas);
 							artOb.setNounCount(nLemmas.size());
-							artOb.setArticleText(article);
+							System.out.println("noun count"+nLemmas.size());
+							
 
 						} else if (elem.getAttribute("name")
 								.equals("PageLabel")) {

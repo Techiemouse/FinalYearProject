@@ -149,7 +149,7 @@ public class ArticleObject {
 		this.nounCount = nounCount;
 	}
 	public String attributeList(ArrayList<String> attribute){
-		attribute = getVerbList();
+		
 	
 		StringBuilder stringBuilder = new StringBuilder();
 		if (attribute.size()==0){

@@ -65,12 +65,16 @@ public class TaggerVerbs {
 	}
 
 	public ArrayList<String> lemmAttributes(String attributeString) {
+		//System.out.println("started function "+ attributeString);
 		ArrayList<String> attributeList = new ArrayList<String>();
+		
 		Properties props = new Properties();
+		
 		props.put("annotators", "tokenize, ssplit, pos, lemma");
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props, false);
 
 		Annotation document = pipeline.process(attributeString);
+		
 		for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
 			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
 				// String word = token.get(TextAnnotation.class);
@@ -81,6 +85,7 @@ public class TaggerVerbs {
 			}
 
 		}
+		
 		return attributeList;
 	}
 
