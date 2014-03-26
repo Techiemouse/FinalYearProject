@@ -8,6 +8,7 @@ package uk.ac.aber.dst1.newsarticleanalysis;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -153,9 +154,10 @@ public class DatabaseSetup {
 		}
 		String createVerbTable = "CREATE TABLE IF NOT EXISTS articleverbs"
 				+ "("
+				+ " id INT NOT NULL AUTO_INCREMENT,"	
 				+ " article_id INT,"			
 				+ " verb_id INT, "
-				+ " PRIMARY KEY (article_id, verb_id),"
+				+ " PRIMARY KEY (id),"
 				+ " FOREIGN KEY (verb_id) REFERENCES verb(id),"
 				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
 				+ " )";
@@ -205,9 +207,10 @@ public class DatabaseSetup {
 		}
 		String createArticleNouns = "CREATE TABLE IF NOT EXISTS articlenouns"
 				+ "("
+				+ " id INT NOT NULL AUTO_INCREMENT,"
 				+ " article_id INT,"			
 				+ " noun_id INT, "
-				+ " PRIMARY KEY (article_id, noun_id),"			
+				+ " PRIMARY KEY (id),"			
 				+ " FOREIGN KEY (noun_id) REFERENCES noun(id),"
 				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
 				+ " )";
@@ -257,9 +260,10 @@ public class DatabaseSetup {
 		}
 		String createArticleDomains = "CREATE TABLE IF NOT EXISTS articledomains"
 				+ "("
-				+ " article_id INT NOT NULL AUTO_INCREMENT,"			
-				+ " domain_id VARCHAR(150), "
-				+ " PRIMARY KEY (article_id, domain_id),"
+				+ " id INT NOT NULL AUTO_INCREMENT,"
+				+ " article_id INT,"			
+				+ " domain_id INT), "
+				+ " PRIMARY KEY (id),"
 				+ " FOREIGN KEY (domain_id) REFERENCES domain(id),"
 				+ " FOREIGN KEY (article_id) REFERENCES article(id)"
 				+ " )";
@@ -277,65 +281,57 @@ public class DatabaseSetup {
 		Statement state = null;
 		Statement stmt = null;
 		Statement duplicate = null;
-		int theLastID=0;
+		int newID=0;
 		String query = "SELECT id FROM publication WHERE pid = '"+artObj.getPublicationPID()+"'";
+		// the following string is used to check if an article that was previous inserted is found again
 		String checkDuplicate = "SELECT id FROM article WHERE couchdbid = '"+artObj.getArticleID()+"'";
 		try {
 			stmt = conn.createStatement();
 			state= conn.createStatement();
 			duplicate = conn.createStatement();
+			PreparedStatement statement = null;
 			ResultSet qResult = stmt.executeQuery(query);
 			ResultSet checkResult = duplicate.executeQuery(checkDuplicate);
 
-			//System.out.println("adding article "+artObj.getArticleID());
+			
 			
 		while (qResult.next()){
 
 				int theID = qResult.getInt("id");
 			if (checkResult.next()){
-				System.out.println("the duplicate id is"+artObj.getArticleID()+" the pub id " +theID);
+				//if an article previous inserted was found again it means it contains other search words from our list this is why the search_term field will be updated
+			  newID= checkResult.getInt("id");
 				String concat = "UPDATE article SET search_term = CONCAT(search_term,' "+ searchT + "') WHERE couchdbid = '"+artObj.getArticleID()+"'";
-				state.executeUpdate(concat);
 				
+				state.executeUpdate(concat);
+				//System.out.println("++++the duplicate article ID is " +newID+ " and article" +artObj.getArticleID());
 			}
 			else{
-				
-		System.out.println("adding article with public " +theID);
-		String addObject = "INSERT INTO article (couchdbid, pid, title, text, verb_list, noun_list, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page)"
-				+ "VALUES ('"
-				+ artObj.getArticleID()
-				+ "','"
-				+ artObj.getPID()
-				+ "','"
-				+ artObj.getArticleTitle()
-				+ "','"
-				+ artObj.getArticleText()
-				+ "','"
-				+ artObj.attributeList(artObj.getVerbList())
-				+ "','"
-				+ artObj.attributeList(artObj.getNounList())
-				+ "','"
-				+ artObj.getVerbCount()
-				+ "','"
-				+ artObj.getNounCount()
-				+ "','"
-				+ artObj.getTextWordCount()
-				+ "','"
-				+ artObj.getArticleAbstract()
-				+ "','"
-				+ searchT
-				+ "','"
-				+ theID
-				//+ artObj.getPublicationPID()
-				+ "','"
-				+ artObj.getPage()
-				+ "')";
-				//+ "ON DUPLICATE KEY UPDATE search_term = CONCAT(search_term,' "
-				//+ searchT + "')"
-				//+"SELECT LAST_INSERT_ID ";
-
-		state.executeUpdate(addObject);
+				String sqlInsert="INSERT INTO article (couchdbid, pid, title, text, verb_list, noun_list, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page)"
+			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
+				statement = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+				statement.setString(1, artObj.getArticleID());
+				statement.setString(2, artObj.getPID());
+				statement.setString(3, artObj.getArticleTitle());
+				statement.setString(4, artObj.getArticleText());
+				statement.setString(5, artObj.attributeList(artObj.getVerbList()));
+				statement.setString(6, artObj.attributeList(artObj.getNounList()));
+				statement.setInt(7, artObj.getVerbCount());
+				statement.setInt(8, artObj.getNounCount());
+				statement.setInt(9, artObj.getTextWordCount());
+				statement.setString(10, artObj.getArticleAbstract());
+				statement.setString(11, searchT);
+				statement.setInt(12, theID);
+				statement.setInt(13, artObj.getPage());
+				statement.executeUpdate();
+				
+				ResultSet rs = statement.getGeneratedKeys();
+				if (rs.next()) {
+				  newID = rs.getInt(1);
+				//System.out.println("the article ID is " +newID+ " and article" +artObj.getArticleID());
+				}
+
 		
 			}
 		}
@@ -347,7 +343,7 @@ public class DatabaseSetup {
 				stmt.close(); 
 			}
 		}
-		return theLastID;
+		return newID;
 	
 	}
 
@@ -422,33 +418,59 @@ public class DatabaseSetup {
 		}
 			
 		}
-		public void addNoun(ArticleObject artObj, Connection conn){
+		public ArrayList<Integer> addNoun(ArticleObject artObj, Connection conn) throws SQLException{
+			PreparedStatement statement = null;
 			Statement stmt = null;
+			int newID=0;
+			ArrayList<Integer> nounIDs = new ArrayList<Integer>();
+			
+			
 			try {
+				
 				stmt = conn.createStatement();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			ArrayList<String> nounList =  artObj.getNounList();
-			for (int i=0; i<nounList.size(); i++ ){
-				
-				String addNoun = "INSER INTO noun (name)"
-						+ "VALUES ('"
-						+ artObj.getNounList().get(i)
-						+"')";
-				try {
-					stmt.executeUpdate(addNoun);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-			}
 			
-		
-		
-	}
+			for (int i=0; i<nounList.size(); i++ ){
+				String query = "SELECT id FROM noun WHERE name ='" + artObj.getNounList().get(i)+"'";
+				System.out.println("the noun "+ artObj.getNounList().get(i));
+				
+				ResultSet getResult = stmt.executeQuery(query);
+				
+				if (getResult.next()){
+					
+					newID= getResult.getInt("id");
+					nounIDs.add(newID);
+					System.out.println("duplicate "+ getResult.getInt("id"));
+				}
+				else{
+					String sqlInsert="INSERT INTO noun (name) VALUE(?)";
+					statement = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+					statement.setString(1, artObj.getNounList().get(i));
+					statement.executeUpdate();
+					
+					ResultSet rs = statement.getGeneratedKeys();	
+					System.out.println("-----gets hereeeeee -----");
+					if (rs.next()) {
+
+						newID = rs.getInt(1);
+						System.out.println("the noun ID is " +newID+ " and noun" +artObj.getNounList().get(i));
+						
+					}
+					nounIDs.add(newID);
+
+
+
+				}
+			}
+
+			return nounIDs;
+
+		}
+
 
 }

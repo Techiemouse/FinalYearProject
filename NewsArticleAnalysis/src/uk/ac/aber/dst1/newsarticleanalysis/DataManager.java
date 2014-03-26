@@ -76,7 +76,7 @@ public class DataManager {
 			// getting the list of only the tags with doc in
 			database.createPublicationTable(db);
 			database.createArticleTable(db);
-			//database.createNounTable(db);
+			database.createNounTable(db);
 			//database.createArticleNouns(db);
 			//database.createVerbTable(db);
 			//database.createArticleVerbs(db);
@@ -110,8 +110,9 @@ public class DataManager {
 				}
 				try {
 					database.addArticleObject(theArticle, db, searchTerm);
-					System.out.println(database.addArticleObject(theArticle, db, searchTerm));
-					//database.addVerb(theArticle, db);
+					//System.out.println(database.addArticleObject(theArticle, db, searchTerm));
+					//System.out.println("the noun size for"+theArticle.getArticleID()+" is "+database.addNoun(theArticle, db).size());
+					printArray(database.addNoun(theArticle, db));
 				} catch (DOMException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -265,10 +266,10 @@ public class DataManager {
 
 	}
 
-	public void printArray(ArrayList<ArticleObject> array) {
+	public void printArray(ArrayList<Integer> array) {
 
 		for(int i = 0; i < array.size(); i++) {
-		System.out.println("done: " + array.size());
+		System.out.println("done: " + array.get(i)+"/n");
 		}
 	}
 

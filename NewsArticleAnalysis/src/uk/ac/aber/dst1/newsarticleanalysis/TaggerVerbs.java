@@ -40,7 +40,7 @@ public class TaggerVerbs {
 			}
 
 		}
-		System.out.println("nouns before: " + attributeString.toString());
+		//System.out.println("nouns before: " + attributeString.toString());
 		
 		
 		}
@@ -58,7 +58,7 @@ public class TaggerVerbs {
 				}
 			
 		}
-			System.out.println("nouns before: " + attributeString.toString());
+			//System.out.println("nouns before: " + attributeString.toString());
 			
 		}
 		return attributeString.toString();
@@ -79,7 +79,7 @@ public class TaggerVerbs {
 			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
 				// String word = token.get(TextAnnotation.class);
 				String lemma = token.get(LemmaAnnotation.class);
-				System.out.println("lemmatized version :" + lemma);
+				//System.out.println("lemmatized version :" + lemma);
 				attributeList.add(lemma);
 
 			}
