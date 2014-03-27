@@ -12,7 +12,7 @@ public class Main {
  */
 	public static void main(String[] args) throws Exception {
 		String searchTerm = "crime";
-		int rows = 7;
+		int rows = 8;
 		URLConnectionReader urlConnect = new URLConnectionReader();
 		// urlConnect.searchArticles();
 		urlConnect.getArticle(searchTerm, rows);

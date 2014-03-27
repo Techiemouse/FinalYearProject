@@ -76,47 +76,28 @@ public class DataManager {
 			// getting the list of only the tags with doc in
 			database.createPublicationTable(db);
 			database.createArticleTable(db);
+			database.createSearchTermTable(db);
+			database.createArticleSearchTerms(db);
 			database.createNounTable(db);
-			//database.createArticleNouns(db);
-			//database.createVerbTable(db);
-			//database.createArticleVerbs(db);
+			database.createArticleNouns(db);			
+			database.createVerbTable(db);
+			database.createArticleVerbs(db);
+			
 			for (int i = 0; i < doc.getElementsByTagName("doc").getLength(); i++) {
 				ArticleObject theArticle = new ArticleObject();
 				ArticleObject thePublication = new ArticleObject();
-				try {
-					thePublication = printNote(doc.getElementsByTagName("doc").item(i),"publication");
-				} catch (DOMException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				try {
-					theArticle = printNote(doc.getElementsByTagName("doc").item(i),"article");
-				} catch (DOMException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				// database.startConnection();
-				try {
-					database.addPublication(thePublication, db);
-				} catch (DOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					database.addArticleObject(theArticle, db, searchTerm);
-					//System.out.println(database.addArticleObject(theArticle, db, searchTerm));
-					//System.out.println("the noun size for"+theArticle.getArticleID()+" is "+database.addNoun(theArticle, db).size());
-					printArray(database.addNoun(theArticle, db));
-				} catch (DOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
+					thePublication = printNote(doc.getElementsByTagName("doc").item(i),"publication");				
+					theArticle = printNote(doc.getElementsByTagName("doc").item(i),"article");								
+					database.addPublication(thePublication, db);							
+					int articleID = database.addArticleObject(theArticle, db, searchTerm);					
+					int searchTermID = database.addSearchTerm(searchTerm, db);
+					database.addArticleSearchTerms(articleID, searchTermID, db);
+					ArrayList<Integer> nounIDs = database.addNoun(theArticle, db);
+					ArrayList<Integer> verbIDs = database.addVerb(theArticle, db);
+					database.addArticleNouns(theArticle, articleID, nounIDs, db);
+					database.addArticleVerbs(theArticle, articleID, verbIDs, db);
+				
 				
 
 			}
