@@ -72,16 +72,18 @@ public class DataManager {
 	public void parsingTheXML(Document doc, String searchTerm) throws SQLException, ParseException {
 
 		if (doc.hasChildNodes()) {
-
+database.addDomain(db);
 			// getting the list of only the tags with doc in
 			database.createPublicationTable(db);
 			database.createArticleTable(db);
+			database.createDomainTable(db);
 			database.createSearchTermTable(db);
 			database.createArticleSearchTerms(db);
 			database.createNounTable(db);
 			database.createArticleNouns(db);			
 			database.createVerbTable(db);
 			database.createArticleVerbs(db);
+			
 			
 			for (int i = 0; i < doc.getElementsByTagName("doc").getLength(); i++) {
 				ArticleObject theArticle = new ArticleObject();

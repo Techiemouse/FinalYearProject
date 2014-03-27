@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DatabaseSetup {
 	ArticleObject artObj = new ArticleObject();
@@ -44,7 +45,7 @@ public class DatabaseSetup {
 		}
 
 		return conn;
-	}// end main
+	}
 
 	public void closeConnection(Connection conn) {
 
@@ -238,7 +239,7 @@ public class DatabaseSetup {
 				+ "("
 				+ " id INT NOT NULL AUTO_INCREMENT,"			
 				+ " name VARCHAR(150), "
-				+ " PRIMARY KEY (id)),";
+				+ " PRIMARY KEY (id))";
 		
 			stmt.executeUpdate(createDomainTable);
 		
@@ -622,6 +623,32 @@ public class DatabaseSetup {
 			
 			
 			}
+		}
+		
+		public void addDomain(Connection conn) throws SQLException{
+			int newID=0;
+			Statement stmt = null;
+			PreparedStatement statement = null;
+			
+			ArrayList<String> domainList = new ArrayList<String>(Arrays.asList(
+					"murder", "fraud", "assault", "theft", "no crime"));
+			for (int i=0; i<domainList.size(); i++){
+			String queryDomain ="SELECT id FROM domain WHERE name= '"+domainList.get(i)+"' ";
+			stmt = conn.createStatement();
+			ResultSet result = stmt.executeQuery(queryDomain);
+			if (result.next()){
+				newID= result.getInt("id");
+			}
+			
+			else{
+			String sqlInsert="INSERT INTO domain (name) VALUE(?)";
+			
+			statement = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+			statement.setString(1, domainList.get(i));
+			statement.executeUpdate();
+			}
+			}
+			
 		}
 
 }
