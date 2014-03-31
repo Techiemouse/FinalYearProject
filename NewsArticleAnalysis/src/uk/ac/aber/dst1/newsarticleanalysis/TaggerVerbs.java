@@ -51,7 +51,7 @@ public class TaggerVerbs {
 			String sentence = tagged.replace("_NN ", " ").replace("_NNS", "");
 
 			for (String word : sentence.split(" ")) {
-				// if words don't have the _ sign they will be verbs and will be
+				// if words don't have the _ sign they will be nouns and will be
 				// added to the array
 				if (!word.contains("_")) {
 					attributeString.append(" " + word);
@@ -80,8 +80,10 @@ public class TaggerVerbs {
 				// String word = token.get(TextAnnotation.class);
 				String lemma = token.get(LemmaAnnotation.class);
 				//System.out.println("lemmatized version :" + lemma);
+				if ((lemma.matches("[A-Za-z-_]+")) && (lemma.length()>=2)){
+					//System.out.println("---clean lemma: " + lemma);
 				attributeList.add(lemma);
-
+			}
 			}
 
 		}

@@ -1,6 +1,10 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 
 
@@ -52,4 +56,36 @@ public class DatabaseAccess {
 			System.out.println("Goodbye!");
 
 		}
+		
+		public ArrayList<String> getArticle(Connection conn) throws SQLException{
+			Statement statement = null;
+			ArrayList<String> articleInfo = new ArrayList<String>();
+			String getArticle = "SELECT id, text, title FROM article WHERE wourd_count > 10";
+			statement = conn.createStatement();
+			ResultSet getResult = statement.executeQuery(getArticle);
+			int theID = getResult.getInt("id");
+			String text =getResult.getString("text");
+			String title = getResult.getString("title");
+			
+			String id =Integer.toString(theID);
+			
+			articleInfo.add(id);
+			articleInfo.add(title);
+			articleInfo.add(text);
+			
+			return articleInfo;
+		}
+		
+		public void insertDomain (int input,Connection conn) throws SQLException{
+			PreparedStatement statement = null;
+			
+			
+			String sqlInsert="INSERT INTO articledomains (name) VALUE(?)";
+			statement = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+			statement.setInt(1, input);
+			statement.executeUpdate();
+			
+			
+		}
+		
 }

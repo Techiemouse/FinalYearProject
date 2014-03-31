@@ -60,10 +60,20 @@ public class URLConnectionReader extends Authenticator {
 		// when a proxy or an HTTP server asks for authentication.
 
 		Authenticator.setDefault(new URLConnectionReader());
-
+      if (searchTerm.contains(" ")){
+    	 
+    	  searchTerm = searchTerm.replaceAll(" ", "%20");
+        
+       }
+       else{
+    	 // searchTerm=searchTerm;
+    	   System.out.println("doesn't contain space: "+searchTerm);
+        	
+        }
 		URL news = new URL(
 				"http://hacathon.llgc.org.uk/solr/select/?q=ArticleSubject:News%20AND%20ArticleText:"
 						+ searchTerm + "&rows=" + rows);
+		 
 		URLConnection yc = news.openConnection();
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -82,6 +92,7 @@ public class URLConnectionReader extends Authenticator {
 		dataManager.parsingTheXML(doc, searchTerm);
 
 		in.close();
+        
 	}
 
 	/**

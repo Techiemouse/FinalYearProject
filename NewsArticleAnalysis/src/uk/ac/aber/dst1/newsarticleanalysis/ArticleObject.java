@@ -152,15 +152,15 @@ public class ArticleObject {
 		
 	
 		StringBuilder stringBuilder = new StringBuilder();
-		if (attribute.size()==0){
-			stringBuilder.append("no verbs");
-		}
-		else{
+		//if (attribute.size()==0){
+		//	stringBuilder.append("no verbs");
+		//}
+		//else{
 		for (int i=0; i<attribute.size();i++){
 			
 			 stringBuilder.append(","+attribute.get(i));
 			
-		}
+		//}
 		}
 		
 		return stringBuilder.toString();

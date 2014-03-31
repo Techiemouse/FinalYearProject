@@ -71,10 +71,10 @@ public class DatabaseSetup {
 		}
 		String createArticleTable = "CREATE TABLE IF NOT EXISTS article" + "("
 				+ "id INT NOT NULL AUTO_INCREMENT," + "couchdbid VARCHAR(35), "
-				+ " pid VARCHAR(20), " + " title VARCHAR(255), "
+				+ " pid VARCHAR(20), " + " title TEXT, "
 				+ " text TEXT, " + " verb_list TEXT, "+ " noun_list TEXT, "
 				+ " verb_count SMALLINT, "+ " noun_count SMALLINT, " + " word_count SMALLINT, "
-				+ " abstract VARCHAR(255), " + " search_term VARCHAR(255), "
+				+ " abstract TEXT, " + " search_term VARCHAR(255), "
 				+ " publication_id INT, " + " page TINYINT, "
 				+ " domain VARCHAR(255), " + " PRIMARY KEY (id), "
 				+ "UNIQUE KEY (couchdbid),"
@@ -104,7 +104,7 @@ public class DatabaseSetup {
 				+ "("
 				+ " id INT NOT NULL AUTO_INCREMENT,"
 				+ " pid VARCHAR(20), "
-				+ " title VARCHAR(150), "
+				+ " title TEXT, "
 				+ " issue_date DATETIME, "
 				+ " region VARCHAR(50), "
 				+ " PRIMARY KEY (id))";
@@ -428,7 +428,7 @@ public class DatabaseSetup {
 		
 		for (int i=0; i<verbList.size(); i++ ){
 			String query = "SELECT id FROM verb WHERE name ='" + artObj.getVerbList().get(i)+"'";
-			//System.out.println("the verb "+ artObj.getVerbList().get(i));
+			
 			
 			ResultSet getResult = stmt.executeQuery(query);
 			
@@ -436,7 +436,7 @@ public class DatabaseSetup {
 				
 				newID= getResult.getInt("id");
 				verbIDs.add(newID);
-				//System.out.println("duplicate "+ getResult.getInt("id"));
+			
 			}
 			else{
 				String sqlInsert="INSERT INTO verb (name) VALUE(?)";
@@ -449,7 +449,7 @@ public class DatabaseSetup {
 				if (rs.next()) {
 
 					newID = rs.getInt(1);
-					System.out.println("the noun ID is " +newID+ " and verb" +artObj.getVerbList().get(i));
+					
 					
 				}
 				verbIDs.add(newID);
@@ -498,7 +498,7 @@ public class DatabaseSetup {
 					if (rs.next()) {
 
 						newID = rs.getInt(1);
-						System.out.println("the noun ID is " +newID+ " and noun" +artObj.getNounList().get(i));
+						//System.out.println("the noun ID is " +newID+ " and noun" +artObj.getNounList().get(i));
 						
 					}
 					nounIDs.add(newID);
@@ -591,7 +591,7 @@ public class DatabaseSetup {
 					if (rs.next()) {
 
 						newID = rs.getInt(1);
-						System.out.println("the noun ID is " +newID+ " and noun" + searchTerm);
+						//System.out.println("the noun ID is " +newID+ " and noun" + searchTerm);
 						
 					}
 

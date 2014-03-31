@@ -11,7 +11,7 @@ public class Main {
  * @throws Exception
  */
 	public static void main(String[] args) throws Exception {
-		String searchTerm = "crime";
+		String searchTerm = "breaking and entering";
 		int rows = 8;
 		URLConnectionReader urlConnect = new URLConnectionReader();
 		// urlConnect.searchArticles();
