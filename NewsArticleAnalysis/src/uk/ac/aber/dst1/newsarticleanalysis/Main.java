@@ -11,10 +11,10 @@ public class Main {
  * @throws Exception
  */
 	public static void main(String[] args) throws Exception {
-		String searchTerm = "breaking and entering";
-		int rows = 8;
+		//String searchTerm = "crime";
+		//int rows = 8;
 		URLConnectionReader urlConnect = new URLConnectionReader();
-		// urlConnect.searchArticles();
-		urlConnect.getArticle(searchTerm, rows);
+		urlConnect.searchArticles();
+		//urlConnect.getArticle(searchTerm, rows);
 	}
 }

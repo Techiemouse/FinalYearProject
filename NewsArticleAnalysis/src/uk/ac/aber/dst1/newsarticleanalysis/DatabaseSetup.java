@@ -72,11 +72,11 @@ public class DatabaseSetup {
 		String createArticleTable = "CREATE TABLE IF NOT EXISTS article" + "("
 				+ "id INT NOT NULL AUTO_INCREMENT," + "couchdbid VARCHAR(35), "
 				+ " pid VARCHAR(20), " + " title TEXT, "
-				+ " text TEXT, " + " verb_list TEXT, "+ " noun_list TEXT, "
+				+ " text TEXT, " 
 				+ " verb_count SMALLINT, "+ " noun_count SMALLINT, " + " word_count SMALLINT, "
 				+ " abstract TEXT, " + " search_term VARCHAR(255), "
 				+ " publication_id INT, " + " page TINYINT, "
-				+ " domain VARCHAR(255), " + " PRIMARY KEY (id), "
+				+ " PRIMARY KEY (id), "
 				+ "UNIQUE KEY (couchdbid),"
 				+ "FOREIGN KEY (publication_id) REFERENCES publication(id)"
 				+ " )";
@@ -332,23 +332,22 @@ public class DatabaseSetup {
 				//System.out.println("++++the duplicate article ID is " +newID+ " and article" +artObj.getArticleID());
 			}
 			else{
-				String sqlInsert="INSERT INTO article (couchdbid, pid, title, text, verb_list, noun_list, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page)"
-			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				String sqlInsert="INSERT INTO article (couchdbid, pid, title, text, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page)"
+			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 		
 				statement = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
 				statement.setString(1, artObj.getArticleID());
 				statement.setString(2, artObj.getPID());
 				statement.setString(3, artObj.getArticleTitle());
 				statement.setString(4, artObj.getArticleText());
-				statement.setString(5, artObj.attributeList(artObj.getVerbList()));
-				statement.setString(6, artObj.attributeList(artObj.getNounList()));
-				statement.setInt(7, artObj.getVerbCount());
-				statement.setInt(8, artObj.getNounCount());
-				statement.setInt(9, artObj.getTextWordCount());
-				statement.setString(10, artObj.getArticleAbstract());
-				statement.setString(11, searchT);
-				statement.setInt(12, theID);
-				statement.setInt(13, artObj.getPage());
+				
+				statement.setInt(5, artObj.getVerbCount());
+				statement.setInt(6, artObj.getNounCount());
+				statement.setInt(7, artObj.getTextWordCount());
+				statement.setString(8, artObj.getArticleAbstract());
+				statement.setString(9, searchT);
+				statement.setInt(10, theID);
+				statement.setInt(11, artObj.getPage());
 				statement.executeUpdate();
 				
 				ResultSet rs = statement.getGeneratedKeys();

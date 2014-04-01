@@ -27,9 +27,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DataManager {
-	
 	DatabaseSetup database = new DatabaseSetup();
-	Connection db = database.startConnection();
+	
 /**
  * 
  * @param input the variable is given by the XML result
@@ -69,7 +68,7 @@ public class DataManager {
  * @param searchTerm
  * @throws SQLException 
  */
-	public void parsingTheXML(Document doc, String searchTerm) throws SQLException, ParseException {
+	public void parsingTheXML(Document doc, String searchTerm, Connection db) throws SQLException, ParseException {
 
 		if (doc.hasChildNodes()) {
 
@@ -100,14 +99,14 @@ public class DataManager {
 					ArrayList<Integer> verbIDs = database.addVerb(theArticle, db);
 					database.addArticleNouns(theArticle, articleID, nounIDs, db);
 					database.addArticleVerbs(theArticle, articleID, verbIDs, db);
-				
+				System.out.println("Article -----"+i+"-------- DONE");
 				
 
 			}
-			database.closeConnection(db);
+			
 			// printArray(array);
 		}
-
+		//database.closeConnection(db);
 	}
 
 	private ArticleObject printNote(Node tempNode, String option)
@@ -155,7 +154,7 @@ public class DataManager {
 							String article = replaceCharact(elem
 									.getTextContent());
 							artOb.setArticleText(article);
-							System.out.println("text is set-up "+article);
+							//System.out.println("text is set-up "+article);
 							ArrayList<String> vLemmas =new ArrayList<String>();
 							ArrayList<String> nLemmas =new ArrayList<String>();
 							
@@ -165,13 +164,13 @@ public class DataManager {
 								
 							artOb.setVerbList(vLemmas);
 							artOb.setVerbCount(vLemmas.size());
-							System.out.println("verb count"+vLemmas.size());
+							//System.out.println("verb count"+vLemmas.size());
 							nLemmas = tagg.lemmAttributes(tagg
 									.taggIT(article, "noun"));
 							
 							artOb.setNounList(nLemmas);
 							artOb.setNounCount(nLemmas.size());
-							System.out.println("noun count"+nLemmas.size());
+							//System.out.println("noun count"+nLemmas.size());
 							
 
 						} else if (elem.getAttribute("name")
@@ -253,7 +252,7 @@ public class DataManager {
 	public void printArray(ArrayList<Integer> array) {
 
 		for(int i = 0; i < array.size(); i++) {
-		System.out.println("done: " + array.get(i)+"/n");
+		//System.out.println("done: " + array.get(i)+"/n");
 		}
 	}
 
