@@ -8,32 +8,55 @@ import java.util.Scanner;
 
 public class LabellingHelper {
 
-	
+	String theInput="";
 	DatabaseAccess database = new DatabaseAccess();
 	Connection db = database.startConnection();
 	
 	public void optionMenu() throws SQLException{
 		ArrayList<String> articleDetails = new ArrayList<String>();
-		for (int i=1; i<54; i++){
+		int min=1;
+		int max=4000;
+		int randomID = min + (int)(Math.random() * ((max - min) + 1));
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("enter an input: ");
-		String theInput = keyboard.nextLine();
-	//	while (theInput!=null){
 		
-			if (theInput.equals("")){
-				//articleDetails =database.getArticle(db);
+	
+		if (!theInput.equals("0")){
+		System.out.println("enter an input: ");
+		theInput = keyboard.nextLine();
+		}
+		
+		if (theInput.equals("0")){
 				
-				database.getArticleID(db, "crime",i);
-			//printArray(articleDetails);
-			
-			System.out.println(" ---------------------------------- ");
+				database.getArticleID(db, "crime",randomID);
 				
-			}
-			else {
+				System.out.println("enter a domain input: ");
+				theInput = keyboard.nextLine();
+				try {
+					int numberInput = Integer.parseInt(theInput);
+				    while ((numberInput>=1)&&(numberInput<=5)){
+				    	
+				    	System.out.println(" got domain: "+numberInput+ " for article " +randomID);
+				    	database.insertDomain(randomID, numberInput, db);
+				    	 System.out.println ("other domain? ");
+				    	 theInput = keyboard.nextLine();
+				    	 numberInput = Integer.parseInt(theInput);
+					}
+				   optionMenu();
+				    
+				}
+				catch(NumberFormatException nFE) {
+				    System.out.println("Not an Integer");
+				    optionMenu();
+				}
+				
+				
+	}
+			else if (theInput.equals("#")){
+				System.out.println("Loop over. Goodbye!");
 				//get input and add in domain table and junction table
 			}
-		}
-		//}
+		
+		
 			
 	    
 		

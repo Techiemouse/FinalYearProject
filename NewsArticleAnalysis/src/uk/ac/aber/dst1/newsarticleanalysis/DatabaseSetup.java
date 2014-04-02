@@ -32,9 +32,9 @@ public class DatabaseSetup {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			// STEP 3: Open a connection
-			System.out.println("Connecting to a selected database...");
+			//System.out.println("Connecting to a selected database...");
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
-			System.out.println("Connected database successfully...");
+			//System.out.println("Connected database successfully...");
 
 		} catch (SQLException se) {
 			// Handle errors for JDBC
@@ -70,12 +70,12 @@ public class DatabaseSetup {
 			e1.printStackTrace();
 		}
 		String createArticleTable = "CREATE TABLE IF NOT EXISTS article" + "("
-				+ "id INT NOT NULL AUTO_INCREMENT," + "couchdbid VARCHAR(35), "
-				+ " pid VARCHAR(20), " + " title TEXT, "
+				+ "id INT NOT NULL AUTO_INCREMENT," + "couchdbid VARCHAR(255), "
+				+ " pid VARCHAR(255), " + " title TEXT, "
 				+ " text TEXT, " 
 				+ " verb_count SMALLINT, "+ " noun_count SMALLINT, " + " word_count SMALLINT, "
 				+ " abstract TEXT, " + " search_term VARCHAR(255), "
-				+ " publication_id INT, " + " page TINYINT, "
+				+ " publication_id INT, " + " page VARCHAR(20), "
 				+ " PRIMARY KEY (id), "
 				+ "UNIQUE KEY (couchdbid),"
 				+ "FOREIGN KEY (publication_id) REFERENCES publication(id)"
@@ -103,10 +103,10 @@ public class DatabaseSetup {
 		String createPublicationTable = "CREATE TABLE IF NOT EXISTS publication"
 				+ "("
 				+ " id INT NOT NULL AUTO_INCREMENT,"
-				+ " pid VARCHAR(20), "
+				+ " pid VARCHAR(255), "
 				+ " title TEXT, "
 				+ " issue_date DATETIME, "
-				+ " region VARCHAR(50), "
+				+ " region VARCHAR(255), "
 				+ " PRIMARY KEY (id))";
 		try {
 			stmt.executeUpdate(createPublicationTable);
@@ -136,7 +136,7 @@ public class DatabaseSetup {
 				+ " PRIMARY KEY (id))";
 		try {
 			stmt.executeUpdate(createVerbTable);
-			System.out.println("verb table done...");
+			//System.out.println("verb table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -165,7 +165,7 @@ public class DatabaseSetup {
 				+ " )";
 		try {
 			stmt.executeUpdate(createVerbTable);
-			System.out.println("articleverbs table done...");
+			//System.out.println("articleverbs table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -190,7 +190,7 @@ public class DatabaseSetup {
 				+ " PRIMARY KEY (id))";
 		try {
 			stmt.executeUpdate(createNounTable);
-			System.out.println("noun table done...");
+			//System.out.println("noun table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -219,7 +219,7 @@ public class DatabaseSetup {
 				+ " )";
 		try {
 			stmt.executeUpdate(createArticleNouns);
-			System.out.println("articlenouns table done...");
+			//System.out.println("articlenouns table done...");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -262,7 +262,7 @@ public class DatabaseSetup {
 				+ " )";
 		
 			stmt.executeUpdate(createArticleDomains);
-			System.out.println("articledomains table done...");
+			//System.out.println("articledomains table done...");
 
 	}
 	public void createSearchTermTable(Connection conn) throws SQLException {
@@ -298,7 +298,7 @@ public class DatabaseSetup {
 				+ " )";
 		
 			stmt.executeUpdate(createArticleSearchTerms);
-			System.out.println("articlesearchterms table done...");
+			//System.out.println("articlesearchterms table done...");
 	
 	}
 	public int addArticleObject(ArticleObject artObj, Connection conn,
@@ -309,7 +309,7 @@ public class DatabaseSetup {
 		int newID=0;
 		String query = "SELECT id FROM publication WHERE pid = '"+artObj.getPublicationPID()+"'";
 		// the following string is used to check if an article that was previous inserted is found again
-		String checkDuplicate = "SELECT id FROM article WHERE couchdbid = '"+artObj.getArticleID()+"'";
+		String checkDuplicate = "SELECT id FROM article WHERE couchdbid = '"+artObj.getArticleID()+"' ";
 		try {
 			stmt = conn.createStatement();
 			state= conn.createStatement();
@@ -347,7 +347,7 @@ public class DatabaseSetup {
 				statement.setString(8, artObj.getArticleAbstract());
 				statement.setString(9, searchT);
 				statement.setInt(10, theID);
-				statement.setInt(11, artObj.getPage());
+				statement.setString(11, artObj.getPage());
 				statement.executeUpdate();
 				
 				ResultSet rs = statement.getGeneratedKeys();

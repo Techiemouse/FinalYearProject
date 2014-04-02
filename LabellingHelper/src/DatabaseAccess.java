@@ -56,25 +56,42 @@ public class DatabaseAccess {
 			System.out.println("Goodbye!");
 
 		}
-		public int getArticleID(Connection conn, String searchTerm, int counting) throws SQLException{
+		public int getArticleID(Connection conn, String searchTerm, int randomID) throws SQLException{
 			int theID=0;
 			Statement statement = null;
-			String getID = "SELECT MAX(a.id-'"+counting+"'), a.title, a.text FROM article AS a "
+			Statement stmt = null;
+			
+			System.out.println("checking ....."+randomID);	
+			String checkIfCompleted = "SELECT a.id FROM article AS a "
+					+ "JOIN articledomains AS ad "
+					+ "ON a.id=ad.article_id "
+					+ "WHERE a.id='"+randomID+"' ";
+							//+ "AND ad.domain_id='0'";
+			stmt = conn.createStatement();
+			ResultSet check = stmt.executeQuery(checkIfCompleted);
+			if (!check.next()){
+				System.out.println("No domain for this ID"+randomID);	
+			String getID = "SELECT a.id, a.title, a.text FROM article AS a "
 					+ "JOIN articlesearchterms AS ast "
 					+ "ON a.id=ast.article_id "
 					+ "JOIN searchterm AS st "
 					+ "ON st.id=ast.searchterm_id "
-					+ "WHERE st.name='"+searchTerm+"' ";
-					//+ "HAVING a.id = MIN(a.id+'"+counting+"')";
+					+ "WHERE st.name='"+searchTerm+"' "
+					+ "HAVING a.id='"+randomID+"'";
 					//+ "LIMIT 1";
 					//+ "AND searchterm.name ='"+searchTerm+"'";
 			statement = conn.createStatement();
 			ResultSet getResult = statement.executeQuery(getID);
 			while (getResult.next()){
-				theID =getResult.getInt("MAX(a.id-'"+counting+"')");
+				theID =getResult.getInt("a.id");
 				String text =getResult.getString("a.text");
 				String title = getResult.getString("a.title");
-			System.out.println("id:*** "+theID+" ***article text: "+text);
+			System.out.println("id:*** "+theID+" ***article text: "+text+"***article title: "+title);
+			}
+			}
+			else{
+				System.out.println("Domain exists for article "+randomID);
+				
 			}
 			return theID;
 		}
@@ -101,13 +118,14 @@ public class DatabaseAccess {
 			return articleInfo;
 		}
 		
-		public void insertDomain (int input,Connection conn) throws SQLException{
+		public void insertDomain (int article_id, int input,Connection conn) throws SQLException{
 			PreparedStatement statement = null;
 			
 			
-			String sqlInsert="INSERT INTO articledomains (domain_id) VALUE(?)";
+			String sqlInsert="INSERT INTO articledomains (article_id, domain_id) VALUE(?,?)";
 			statement = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
-			statement.setInt(1, input);
+			statement.setInt(1, article_id);
+			statement.setInt(2, input);
 			statement.executeUpdate();
 			
 			

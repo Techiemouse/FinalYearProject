@@ -19,12 +19,12 @@ import java.util.Arrays;
 import org.w3c.dom.Document;
 
 public class URLConnectionReader extends Authenticator {
-	DatabaseSetup database = new DatabaseSetup();
-	Connection db = database.startConnection();
+	//DatabaseSetup database = new DatabaseSetup();
+	//Connection db = database.startConnection();
 	static String xmls = "";
 	private DataManager dataManager = new DataManager();
 	ArrayList<String> searchTerms = new ArrayList<String>(Arrays.asList(
-			"crime", "arrested", "police"));
+			"arrested"));
 
 	/**
 	 * The function get's each term of the array and makes two API requests: one
@@ -34,16 +34,15 @@ public class URLConnectionReader extends Authenticator {
 	 * @throws Exception
 	 */
 	public void searchArticles() throws Exception {
-		int rows=10;
+		int rows=3000;
+
 		for (int i = 0; i < searchTerms.size(); i++) {
-			//rows = 1;
-			//getArticle(searchTerms.get(i), rows);
-			//System.out.println("intial num is:" + rows);
-			//rows = dataManager.getNumFound(dataManager.buildDom(xmls));
+
 			getArticle(searchTerms.get(i), rows);
-			//System.out.println(" intial num for: " + searchTerms.get(i)+ " is: " + rows);
+			System.out.println("SEARCH TERM ---"+searchTerms.get(i)+"--- DONE for rows: " +rows);
+
 		}
-		database.closeConnection(db);
+		//database.closeConnection(db);
 	}
 
 	/**
@@ -90,7 +89,7 @@ public class URLConnectionReader extends Authenticator {
 
 		Document doc = dataManager.buildDom(xmls);
 
-		dataManager.parsingTheXML(doc, searchTerm,db);
+		dataManager.parsingTheXML(doc, searchTerm);
 
 		in.close();
         

@@ -27,8 +27,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DataManager {
-	DatabaseSetup database = new DatabaseSetup();
-	
+
 /**
  * 
  * @param input the variable is given by the XML result
@@ -68,8 +67,10 @@ public class DataManager {
  * @param searchTerm
  * @throws SQLException 
  */
-	public void parsingTheXML(Document doc, String searchTerm, Connection db) throws SQLException, ParseException {
+	public void parsingTheXML(Document doc, String searchTerm) throws SQLException, ParseException {
+		DatabaseSetup database = new DatabaseSetup();
 
+		Connection db = database.startConnection();
 		if (doc.hasChildNodes()) {
 
 			// getting the list of only the tags with doc in
@@ -99,18 +100,18 @@ public class DataManager {
 					ArrayList<Integer> verbIDs = database.addVerb(theArticle, db);
 					database.addArticleNouns(theArticle, articleID, nounIDs, db);
 					database.addArticleVerbs(theArticle, articleID, verbIDs, db);
-				System.out.println("Article -----"+i+"-------- DONE");
+				//System.out.println("Article -----"+(i+1)+"-------- DONE");
 				
 
 			}
 			
 			// printArray(array);
 		}
-		//database.closeConnection(db);
+		database.closeConnection(db);
 	}
 
 	private ArticleObject printNote(Node tempNode, String option)
-			throws DOMException, ParseException {
+			throws DOMException {
 		TaggerVerbs tagg = new TaggerVerbs();
 
 		ArticleObject artOb = new ArticleObject();
@@ -176,12 +177,16 @@ public class DataManager {
 						} else if (elem.getAttribute("name")
 								.equals("PageLabel")) {
 							String page = elem.getTextContent();
+							
 							if (page.contains("[")) {
 								page = page.replace("[", "");
 								page = page.replace("]", "");
-								artOb.setPage(Integer.parseInt(page));
+								
+								artOb.setPage(page);
 							} else {
-								artOb.setPage(Integer.parseInt(page));
+							
+								artOb.setPage(page);
+							
 							}
 						}
 
@@ -197,13 +202,19 @@ public class DataManager {
 							artOb.setRegion(elem.getTextContent());
 						} else if (elem.getAttribute("name").equals(
 								"PublicationTitle")) {
-							artOb.setPublicationTitle(elem.getTextContent());
+							artOb.setPublicationTitle(replaceCharact(elem
+									.getTextContent()));
 
 						} else if (elem.getAttribute("name")
 								.equals("IssueDate")) {
 
-							artOb.setIssueDate(this.transformToDate(elem
-									.getTextContent()));
+							try {
+								artOb.setIssueDate(this.transformToDate(elem
+										.getTextContent()));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 
 						} else if (elem.getAttribute("name").equals(
 								"PublicationPID")) {

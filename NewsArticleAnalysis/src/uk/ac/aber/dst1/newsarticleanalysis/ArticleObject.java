@@ -15,7 +15,7 @@ public class ArticleObject {
 	ArrayList<String> verbList = new ArrayList<String>();
 	ArrayList<String> nounList = new ArrayList<String>();
 	private int verbCount;
-	private int page;
+	private String page;
 	private int nounCount;
 	private String publicationTitle;
 	private String publicationPID;
@@ -105,10 +105,10 @@ public class ArticleObject {
 	public void setPID(String pID) {
 		this.pID = pID;
 	}
-	public int getPage() {
+	public String getPage() {
 		return page;
 	}
-	public void setPage(int page) {
+	public void setPage(String page) {
 		this.page = page;
 	}
 	public String getpID() {
