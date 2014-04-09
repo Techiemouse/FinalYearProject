@@ -19,13 +19,12 @@ import java.util.Arrays;
 import org.w3c.dom.Document;
 
 public class URLConnectionReader extends Authenticator {
-	//DatabaseSetup database = new DatabaseSetup();
-	//Connection db = database.startConnection();
+
 	static String xmls = "";
 	private DataManager dataManager = new DataManager();
 	ArrayList<String> searchTerms = new ArrayList<String>(Arrays.asList(
-			"arrested"));
-
+			"crime","arrested","police","investigation"));
+	
 	/**
 	 * The function get's each term of the array and makes two API requests: one
 	 * to find the number of results found for that word and the other to get
@@ -34,11 +33,12 @@ public class URLConnectionReader extends Authenticator {
 	 * @throws Exception
 	 */
 	public void searchArticles() throws Exception {
-		int rows=3000;
+		int rows=20;
+		int start = 0;
 
 		for (int i = 0; i < searchTerms.size(); i++) {
 
-			getArticle(searchTerms.get(i), rows);
+			getArticle(searchTerms.get(i), rows, start);
 			System.out.println("SEARCH TERM ---"+searchTerms.get(i)+"--- DONE for rows: " +rows);
 
 		}
@@ -55,7 +55,7 @@ public class URLConnectionReader extends Authenticator {
 	 *            will be shown in the result of the query
 	 * @throws Exception
 	 */
-	public void getArticle(String searchTerm, int rows) throws Exception {
+	public void getArticle(String searchTerm, int rows, int start) throws Exception {
 		// Sets the authenticator that will be used by the networking code
 		// when a proxy or an HTTP server asks for authentication.
 
@@ -65,14 +65,14 @@ public class URLConnectionReader extends Authenticator {
     	  searchTerm = searchTerm.replaceAll(" ", "%20");
         
        }
-       else{
+      /* else{
     	 // searchTerm=searchTerm;
     	   //System.out.println("doesn't contain space: "+searchTerm);
         	
-        }
+        }*/
 		URL news = new URL(
 				"http://hacathon.llgc.org.uk/solr/select/?q=ArticleSubject:News%20AND%20ArticleText:"
-						+ searchTerm + "&rows=" + rows);
+						+ searchTerm + "&start=" + start+"&rows=" + rows);
 		 
 		URLConnection yc = news.openConnection();
 

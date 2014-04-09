@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -11,14 +12,15 @@ public class LabellingHelper {
 	String theInput="";
 	DatabaseAccess database = new DatabaseAccess();
 	Connection db = database.startConnection();
-	
+	ArrayList<String> searchTerms = new ArrayList<String>(Arrays.asList(
+			"investigation","crime","arrested","police"));
 	public void optionMenu() throws SQLException{
-		ArrayList<String> articleDetails = new ArrayList<String>();
+		
 		int min=1;
-		int max=4000;
+		int max=15913;
 		int randomID = min + (int)(Math.random() * ((max - min) + 1));
 		Scanner keyboard = new Scanner(System.in);
-		
+		//int randomIDg=15976;
 	
 		if (!theInput.equals("0")){
 		System.out.println("enter an input: ");
@@ -26,14 +28,14 @@ public class LabellingHelper {
 		}
 		
 		if (theInput.equals("0")){
-				
-				database.getArticleID(db, "crime",randomID);
-				
+			for (int i = 0; i < searchTerms.size(); i++) {
+				database.getArticleID(db, searchTerms.get(i),randomID);
+			}
 				System.out.println("enter a domain input: ");
 				theInput = keyboard.nextLine();
 				try {
 					int numberInput = Integer.parseInt(theInput);
-				    while ((numberInput>=1)&&(numberInput<=5)){
+				    while ((numberInput>=1)&&(numberInput<=8)){
 				    	
 				    	System.out.println(" got domain: "+numberInput+ " for article " +randomID);
 				    	database.insertDomain(randomID, numberInput, db);
@@ -45,7 +47,7 @@ public class LabellingHelper {
 				    
 				}
 				catch(NumberFormatException nFE) {
-				    System.out.println("Not an Integer");
+				    //System.out.println("Not an Integer");
 				    optionMenu();
 				}
 				

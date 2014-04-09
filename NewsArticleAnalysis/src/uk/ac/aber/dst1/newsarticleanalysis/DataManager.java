@@ -74,6 +74,7 @@ public class DataManager {
 		if (doc.hasChildNodes()) {
 
 			// getting the list of only the tags with doc in
+			
 			database.createPublicationTable(db);
 			database.createArticleTable(db);
 			database.createDomainTable(db);
@@ -88,6 +89,7 @@ public class DataManager {
 			
 			for (int i = 0; i < doc.getElementsByTagName("doc").getLength(); i++) {
 				ArticleObject theArticle = new ArticleObject();
+			 
 				ArticleObject thePublication = new ArticleObject();
 				
 					thePublication = printNote(doc.getElementsByTagName("doc").item(i),"publication");				
@@ -100,7 +102,7 @@ public class DataManager {
 					ArrayList<Integer> verbIDs = database.addVerb(theArticle, db);
 					database.addArticleNouns(theArticle, articleID, nounIDs, db);
 					database.addArticleVerbs(theArticle, articleID, verbIDs, db);
-				//System.out.println("Article -----"+(i+1)+"-------- DONE");
+			
 				
 
 			}
@@ -131,10 +133,12 @@ public class DataManager {
 						if (elem.getAttribute("name").equals("PID")) {
 
 							artOb.setPID(elem.getTextContent());
-						} else if (elem.getAttribute("name")
+						} 
+						else if (elem.getAttribute("name")
 								.equals("ArticleID")) {
 							artOb.setArticleID(elem.getTextContent());
-						} else if (elem.getAttribute("name").equals(
+						} 
+						else if (elem.getAttribute("name").equals(
 								"ArticleTitle")) {
 
 							artOb.setArticleTitle(replaceCharact(elem
@@ -155,7 +159,7 @@ public class DataManager {
 							String article = replaceCharact(elem
 									.getTextContent());
 							artOb.setArticleText(article);
-							//System.out.println("text is set-up "+article);
+							
 							ArrayList<String> vLemmas =new ArrayList<String>();
 							ArrayList<String> nLemmas =new ArrayList<String>();
 							
@@ -165,13 +169,13 @@ public class DataManager {
 								
 							artOb.setVerbList(vLemmas);
 							artOb.setVerbCount(vLemmas.size());
-							//System.out.println("verb count"+vLemmas.size());
+							
 							nLemmas = tagg.lemmAttributes(tagg
 									.taggIT(article, "noun"));
 							
 							artOb.setNounList(nLemmas);
 							artOb.setNounCount(nLemmas.size());
-							//System.out.println("noun count"+nLemmas.size());
+							
 							
 
 						} else if (elem.getAttribute("name")
@@ -188,6 +192,17 @@ public class DataManager {
 								artOb.setPage(page);
 							
 							}
+						}else if (elem.getAttribute("name")
+								.equals("IssueDate")) {
+
+							try {
+								artOb.setIssueDate(this.transformToDate(elem
+										.getTextContent()));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+
 						}
 
 						else if (elem.getAttribute("name").equals(
@@ -205,18 +220,7 @@ public class DataManager {
 							artOb.setPublicationTitle(replaceCharact(elem
 									.getTextContent()));
 
-						} else if (elem.getAttribute("name")
-								.equals("IssueDate")) {
-
-							try {
-								artOb.setIssueDate(this.transformToDate(elem
-										.getTextContent()));
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-
-						} else if (elem.getAttribute("name").equals(
+						}  else if (elem.getAttribute("name").equals(
 								"PublicationPID")) {
 							artOb.setPublicationPID(elem.getTextContent());
 
@@ -267,18 +271,6 @@ public class DataManager {
 		}
 	}
 
-	public void appentArticles() {
-		// LOOP THROUGH EACH article
-		// {
 
-		// if(articleid.getchars.get(articleid.getchars().size()-1) == 1){
-		// add to new spot in array
-		// }
-		// else{
-		// add to the previous spot in array
-		// }
-		// }
-
-	}
 
 }

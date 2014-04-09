@@ -13,7 +13,7 @@ public class DatabaseAccess {
 	
 	
 		static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-		static final String DB_URL = "jdbc:mysql://localhost:3306/initialarticlesdata";
+		static final String DB_URL = "jdbc:mysql://localhost:3306/articledatabase";
 
 		// Database credentials
 		static final String USER = "Diana";
@@ -61,7 +61,7 @@ public class DatabaseAccess {
 			Statement statement = null;
 			Statement stmt = null;
 			
-			System.out.println("checking ....."+randomID);	
+			//System.out.println("checking ....."+randomID);	
 			String checkIfCompleted = "SELECT a.id FROM article AS a "
 					+ "JOIN articledomains AS ad "
 					+ "ON a.id=ad.article_id "
@@ -70,8 +70,8 @@ public class DatabaseAccess {
 			stmt = conn.createStatement();
 			ResultSet check = stmt.executeQuery(checkIfCompleted);
 			if (!check.next()){
-				System.out.println("No domain for this ID"+randomID);	
-			String getID = "SELECT a.id, a.title, a.text FROM article AS a "
+				//System.out.println("No domain for this ID"+randomID);	
+			String getID = "SELECT a.id, a.title, a.text, a.abstract FROM article AS a "
 					+ "JOIN articlesearchterms AS ast "
 					+ "ON a.id=ast.article_id "
 					+ "JOIN searchterm AS st "
@@ -86,7 +86,8 @@ public class DatabaseAccess {
 				theID =getResult.getInt("a.id");
 				String text =getResult.getString("a.text");
 				String title = getResult.getString("a.title");
-			System.out.println("id:*** "+theID+" ***article text: "+text+"***article title: "+title);
+				String abst = getResult.getString("a.abstract");
+			System.out.println("id:*** "+theID+" abstract****"+abst+"***article text: "+text+"***article title: "+title);
 			}
 			}
 			else{
@@ -98,7 +99,7 @@ public class DatabaseAccess {
 		public ArrayList<String> getArticle(Connection conn) throws SQLException{
 			Statement statement = null;
 			ArrayList<String> articleInfo = new ArrayList<String>();
-			String getSearchWord = "SELECT ";
+			
 			String getArticle = "SELECT id, text, title FROM article WHERE word_count > 10";
 					//+ "id.article=article_id.articlesearchterms AND id.searchterm = searchterm_id.articlesearchterms";
 			statement = conn.createStatement();

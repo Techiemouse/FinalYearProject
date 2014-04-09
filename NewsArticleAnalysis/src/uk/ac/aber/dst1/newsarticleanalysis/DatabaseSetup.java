@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class DatabaseSetup {
 	ArticleObject artObj = new ArticleObject();
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	static final String DB_URL = "jdbc:mysql://localhost:3306/initialarticlesdata";
+	static final String DB_URL = "jdbc:mysql://localhost:3306/articledatabase";
 
 	// Database credentials
 	static final String USER = "Diana";
@@ -75,7 +75,7 @@ public class DatabaseSetup {
 				+ " text TEXT, " 
 				+ " verb_count SMALLINT, "+ " noun_count SMALLINT, " + " word_count SMALLINT, "
 				+ " abstract TEXT, " + " search_term VARCHAR(255), "
-				+ " publication_id INT, " + " page VARCHAR(20), "
+				+ " publication_id INT, " + " page VARCHAR(20), "+ " thedate DATETIME, "
 				+ " PRIMARY KEY (id), "
 				+ "UNIQUE KEY (couchdbid),"
 				+ "FOREIGN KEY (publication_id) REFERENCES publication(id)"
@@ -105,7 +105,6 @@ public class DatabaseSetup {
 				+ " id INT NOT NULL AUTO_INCREMENT,"
 				+ " pid VARCHAR(255), "
 				+ " title TEXT, "
-				+ " issue_date DATETIME, "
 				+ " region VARCHAR(255), "
 				+ " PRIMARY KEY (id))";
 		try {
@@ -332,8 +331,8 @@ public class DatabaseSetup {
 				//System.out.println("++++the duplicate article ID is " +newID+ " and article" +artObj.getArticleID());
 			}
 			else{
-				String sqlInsert="INSERT INTO article (couchdbid, pid, title, text, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page)"
-			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+				String sqlInsert="INSERT INTO article (couchdbid, pid, title, text, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page, thedate)"
+			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 				statement = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
 				statement.setString(1, artObj.getArticleID());
@@ -348,6 +347,7 @@ public class DatabaseSetup {
 				statement.setString(9, searchT);
 				statement.setInt(10, theID);
 				statement.setString(11, artObj.getPage());
+				statement.setString(12, artObj.getIssueDate());
 				statement.executeUpdate();
 				
 				ResultSet rs = statement.getGeneratedKeys();
@@ -370,6 +370,56 @@ public class DatabaseSetup {
 		return newID;
 	
 	}
+	
+	//+++++++++++new i don't need
+	public void addArticleDate(ArticleObject artObj, Connection conn,
+			String searchT) throws SQLException {
+		Statement state = null;
+		Statement stmt = null;
+		Statement duplicate = null;
+		int newID=0;
+		//String query = "SELECT id FROM publication WHERE pid = '"+artObj.getPublicationPID()+"'";
+		// the following string is used to check if an article that was previous inserted is found again
+		String checkDuplicate = "SELECT id FROM article WHERE couchdbid = '"+artObj.getArticleID()+"' ";
+		try {
+			stmt = conn.createStatement();
+			state= conn.createStatement();
+			duplicate = conn.createStatement();
+			PreparedStatement statement = null;
+			//ResultSet qResult = stmt.executeQuery(query);
+			ResultSet checkResult = duplicate.executeQuery(checkDuplicate);
+
+			
+			
+	//	while (qResult.next()){
+
+				//int theID = qResult.getInt("id");
+			if (checkResult.next()){
+				//if an article previous inserted was found again it means it contains other search words from our list this is why the search_term field will be updated
+			 // newID= checkResult.getInt("id");
+				String concat = "UPDATE article SET thedate = '"+artObj.getIssueDate()+"' WHERE couchdbid = '"+artObj.getArticleID()+"'";
+				
+				state.executeUpdate(concat);
+				//System.out.println("++++the duplicate article ID is " +newID+ " and article" +artObj.getArticleID());
+			}
+			else{
+				System.out.println("Now article with that id in tables");
+				}
+
+		
+			//}
+	//	}
+		
+			
+		}
+		finally {
+			if (stmt != null) { 
+				stmt.close(); 
+			}
+		}
+	
+	
+	}
 
 	public void addPublication(ArticleObject artObj, Connection conn) throws SQLException {
 		Statement stmt = null;
@@ -385,14 +435,14 @@ public class DatabaseSetup {
 				//System.out.println("adding public ");
 			}
 			else{
-				String addPublication = "INSERT INTO publication (pid, title, issue_date, region)"
+				String addPublication = "INSERT INTO publication (pid, title, region)"
 						+ "VALUES ('"
 						+ artObj.getPublicationPID()
 						+ "','"
 						+ artObj.getPublicationTitle()
 						+ "','"
-						+ artObj.getIssueDate()
-						+ "','"
+						//+ artObj.getIssueDate()
+						//+ "','"
 						+ artObj.getRegion()
 						+ "')"; 
 				//+ "ON DUPLICATE KEY UPDATE id=id";
@@ -630,7 +680,7 @@ public class DatabaseSetup {
 			PreparedStatement statement = null;
 			
 			ArrayList<String> domainList = new ArrayList<String>(Arrays.asList(
-					"murder", "fraud", "assault", "theft", "no crime"));
+					"murder", "fraud", "assault", "theft", "no crime","conspiracy","misconduct","property damage"));
 			for (int i=0; i<domainList.size(); i++){
 			String queryDomain ="SELECT id FROM domain WHERE name= '"+domainList.get(i)+"' ";
 			stmt = conn.createStatement();
