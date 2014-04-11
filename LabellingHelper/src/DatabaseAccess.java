@@ -7,8 +7,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 
-
-
 public class DatabaseAccess {
 	
 	

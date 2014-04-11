@@ -1,5 +1,6 @@
 package uk.ac.aber.dst1.newsarticleanalysis;
 
+import java.sql.Connection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -9,7 +10,7 @@ import java.util.Scanner;
  */
 public class Main {
 	static URLConnectionReader urlConnect = new URLConnectionReader();
-	
+	static MLTable mlTable = new MLTable();
 /**
  * Main method that calls the connection
  * @param args
@@ -21,6 +22,10 @@ public class Main {
 		int start;
 		String searchTerm;
 		Scanner scan = new Scanner(System.in);
+		
+		mlTable.createTrainingTable();
+		
+		/*
 		System.out.println("what is the search term of choice?: ");
 		searchTerm =  scan.nextLine();
 		System.out.println("How many articles to download(no of rows)?: ");
@@ -47,6 +52,7 @@ public class Main {
 		urlConnect.getArticle(searchTerm, rows, start);
 		
 		//urlConnect.searchArticles();
+		 */
 	}
 
 
