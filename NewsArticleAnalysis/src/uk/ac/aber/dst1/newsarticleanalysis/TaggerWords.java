@@ -18,7 +18,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.util.CoreMap;
 
-public class TaggerVerbs {
+public class TaggerWords {
 
 	public String taggIT(String theText, String option) {
 		StringBuilder attributeString = new StringBuilder();

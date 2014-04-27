@@ -114,7 +114,7 @@ public class DataManager {
 
 	private ArticleObject printNote(Node tempNode, String option)
 			throws DOMException {
-		TaggerVerbs tagg = new TaggerVerbs();
+		TaggerWords tagg = new TaggerWords();
 
 		ArticleObject artOb = new ArticleObject();
 		// make sure it's element node.
