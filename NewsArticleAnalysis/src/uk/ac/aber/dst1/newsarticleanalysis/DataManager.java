@@ -244,14 +244,13 @@ public class DataManager {
 
 	}
 
-	/*
-	 * public ArrayList<String> getWordList(String text) { ArrayList<String>
-	 * wordsList = new ArrayList<String>(); for (String word :
-	 * text.split("\\W")) { wordsList.add(word); }
-	 * 
-	 * return wordsList; }
-	 */
 
+	/**
+	 * The function Takes the date and transforms it into the format needed for the MySQL datetime type.
+	 * @param date The string version of the date taken from the XML response
+	 * @return the date as String after formating it for the MySQL type
+	 * @throws ParseException
+	 */
 	public String transformToDate(String date) throws ParseException {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -263,11 +262,14 @@ public class DataManager {
 		return date;
 
 	}
-
+/**
+ * Function  that prints out the array
+ * @param array
+ */
 	public void printArray(ArrayList<Integer> array) {
 
 		for(int i = 0; i < array.size(); i++) {
-		//System.out.println("done: " + array.get(i)+"/n");
+			System.out.println("done: " + array.get(i)+"/n");
 		}
 	}
 

@@ -230,8 +230,7 @@ public class DatabaseSetup {
 	public void createDomainTable(Connection conn) throws SQLException {
 
 		Statement stmt = null;
-
-		
+	
 			stmt = conn.createStatement();
 		
 		String createDomainTable = "CREATE TABLE IF NOT EXISTS domain"
@@ -297,8 +296,6 @@ public class DatabaseSetup {
 				+ " )";
 		
 			stmt.executeUpdate(createArticleSearchTerms);
-			//System.out.println("articlesearchterms table done...");
-	
 	}
 	public int addArticleObject(ArticleObject artObj, Connection conn,
 			String searchT) throws SQLException {
@@ -328,7 +325,7 @@ public class DatabaseSetup {
 				String concat = "UPDATE article SET search_term = CONCAT(search_term,' "+ searchT + "') WHERE couchdbid = '"+artObj.getArticleID()+"'";
 				
 				state.executeUpdate(concat);
-				//System.out.println("++++the duplicate article ID is " +newID+ " and article" +artObj.getArticleID());
+			
 			}
 			else{
 				String sqlInsert="INSERT INTO article (couchdbid, pid, title, text, verb_count, noun_count, word_count, abstract, search_term, publication_id,  page, thedate)"
@@ -371,45 +368,34 @@ public class DatabaseSetup {
 	
 	}
 	
-	//+++++++++++new i don't need
+	//+++++++++++function required when a mistake was made in the database and the issue dates had to be downloaded and inserted in the right table
 	public void addArticleDate(ArticleObject artObj, Connection conn,
 			String searchT) throws SQLException {
 		Statement state = null;
 		Statement stmt = null;
 		Statement duplicate = null;
-		int newID=0;
-		//String query = "SELECT id FROM publication WHERE pid = '"+artObj.getPublicationPID()+"'";
+		
 		// the following string is used to check if an article that was previous inserted is found again
 		String checkDuplicate = "SELECT id FROM article WHERE couchdbid = '"+artObj.getArticleID()+"' ";
 		try {
 			stmt = conn.createStatement();
 			state= conn.createStatement();
 			duplicate = conn.createStatement();
-			PreparedStatement statement = null;
-			//ResultSet qResult = stmt.executeQuery(query);
+			
+		
 			ResultSet checkResult = duplicate.executeQuery(checkDuplicate);
 
-			
-			
-	//	while (qResult.next()){
-
-				//int theID = qResult.getInt("id");
 			if (checkResult.next()){
 				//if an article previous inserted was found again it means it contains other search words from our list this is why the search_term field will be updated
-			 // newID= checkResult.getInt("id");
+			
 				String concat = "UPDATE article SET thedate = '"+artObj.getIssueDate()+"' WHERE couchdbid = '"+artObj.getArticleID()+"'";
 				
 				state.executeUpdate(concat);
-				//System.out.println("++++the duplicate article ID is " +newID+ " and article" +artObj.getArticleID());
+				
 			}
 			else{
-				System.out.println("Now article with that id in tables");
+				System.out.println("No article with that id in tables");
 				}
-
-		
-			//}
-	//	}
-		
 			
 		}
 		finally {
@@ -430,9 +416,9 @@ public class DatabaseSetup {
 			stmt = conn.createStatement();
 			state = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			//System.out.println("adding public "+artObj.getPublicationPID());
+	
 			if (rs.next()) {
-				//System.out.println("adding public ");
+				
 			}
 			else{
 				String addPublication = "INSERT INTO publication (pid, title, region)"
@@ -562,7 +548,7 @@ public class DatabaseSetup {
 		}
 		public void addArticleNouns(ArticleObject artObj, int articleID, ArrayList<Integer> nounIDs, Connection conn) throws SQLException{
 			PreparedStatement statement = null;
-			int newID=0;
+			
 			Statement stmt = null;
 			String queryCount = "SELECT id FROM articlenouns WHERE article_id = '"+articleID+"' HAVING COUNT(article_id)= '"+artObj.getNounCount()+"'";
 			stmt = conn.createStatement();
@@ -570,7 +556,7 @@ public class DatabaseSetup {
 
 			
 			if (getQueryCount.next()){
-				newID= getQueryCount.getInt("id");
+				//int newID= getQueryCount.getInt("id");
 			}
 			
 			else{
@@ -589,7 +575,7 @@ public class DatabaseSetup {
 		
 		public void addArticleVerbs(ArticleObject artObj, int articleID, ArrayList<Integer> verbIDs, Connection conn) throws SQLException{
 			PreparedStatement statement = null;
-			int newID=0;
+		
 			Statement stmt = null;
 			String queryCount = "SELECT id FROM articleverbs WHERE article_id = '"+articleID+"' HAVING COUNT(article_id)= '"+artObj.getVerbCount()+"'";
 			stmt = conn.createStatement();
@@ -597,7 +583,7 @@ public class DatabaseSetup {
 
 			
 			if (getQueryCount.next()){
-				newID= getQueryCount.getInt("id");
+				//int newID= getQueryCount.getInt("id");
 			}
 			
 			else{
@@ -640,7 +626,7 @@ public class DatabaseSetup {
 					if (rs.next()) {
 
 						newID = rs.getInt(1);
-						//System.out.println("the noun ID is " +newID+ " and noun" + searchTerm);
+						
 						
 					}
 
@@ -652,7 +638,7 @@ public class DatabaseSetup {
 		
 		public void addArticleSearchTerms(int articleID, int searchtermID, Connection conn) throws SQLException{
 			PreparedStatement statement = null;
-			int newID=0;
+			
 			Statement stmt = null;
 			String queryCount = "SELECT id FROM articlesearchterms WHERE article_id = '"+articleID+"' AND searchterm_id= '"+searchtermID+"'";
 			stmt = conn.createStatement();
@@ -660,7 +646,7 @@ public class DatabaseSetup {
 
 			
 			if (getQueryCount.next()){
-				newID= getQueryCount.getInt("id");
+				//int newID= getQueryCount.getInt("id");
 			}
 			
 			else{
@@ -675,7 +661,7 @@ public class DatabaseSetup {
 		}
 		
 		public void addDomain(Connection conn) throws SQLException{
-			int newID=0;
+			
 			Statement stmt = null;
 			PreparedStatement statement = null;
 			
@@ -686,7 +672,7 @@ public class DatabaseSetup {
 			stmt = conn.createStatement();
 			ResultSet result = stmt.executeQuery(queryDomain);
 			if (result.next()){
-				newID= result.getInt("id");
+				//int newID= result.getInt("id");
 			}
 			
 			else{

@@ -12,7 +12,6 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
