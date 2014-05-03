@@ -188,7 +188,7 @@ public class MLTable {
 		//insertVerbOccurrence(verbList, trainArticlesID, conn, "mlverbtraining");
 		// insertVerbOccurrence(verbList, testArticlesID, conn, "mlverbtest");
 		 //insertNounOccurrence(nounList, trainArticlesID, conn, "mlnountraining");
-		 insertNounOccurrence(nounList, testArticlesID, conn, "mlnountest");
+		// insertNounOccurrence(nounList, testArticlesID, conn, "mlnountest");
 		 /* insertDomainOccurrence(domainList, trainArticlesID, conn, "mlnountraining");
 		 insertDomainOccurrence(domainList, testArticlesID, conn, "mlnountest");
 		 System.out.println(" ++++done domains in noun ");
@@ -201,7 +201,12 @@ public class MLTable {
 		 insertSearchTermOccurrence(searchTermList, trainArticlesID, conn, "mlverbtraining");
 		 insertSearchTermOccurrence(searchTermList, testArticlesID, conn, "mlverbtest");
 		 System.out.println(" ---done searcht in verb ");*/
-		 
+		// insertLabelledDomain(conn, trainArticlesID, "mlnountraining");
+		 insertLabelledDomain(conn, testArticlesID, "mlnountest");
+		 System.out.println(" ---done labeled domain noun ml ");
+		// insertLabelledDomain(conn, trainArticlesID, "mlverbtraining");
+		 insertLabelledDomain(conn, testArticlesID, "mlverbtest");
+		 System.out.println(" ---done labeled domain verb ml ");
 		closeConnection(conn);
 
 	}
@@ -537,6 +542,29 @@ public class MLTable {
 
 	
 	}
+		
+		public void insertLabelledDomain(Connection conn, ArrayList<Integer> articlesID, String tablename) throws SQLException{
+			for (int i = 0; i < articlesID.size(); i++) {
+				Statement stmt = null;
+				Statement stateRes = null;
+			String query = "SELECT ad.article_id, d.name "
+					+ "FROM articledatabase.articledomains AS ad "
+					+ "JOIN articledatabase.domain AS d "
+					+ "ON ad.domain_id=d.id "
+					+ "WHERE ad.article_id="+articlesID.get(i)+" LIMIT 1";
+			stmt = conn.createStatement();
+			ResultSet getResult = stmt.executeQuery(query);
+			if (getResult.next()) {
+				String theDomain=getResult.getString("d.name");
+			
+				String insertValue="UPDATE "+tablename+" "
+				 		+ "SET domain='"+theDomain+"' "
+				 		+ "WHERE article_id="+articlesID.get(i)+""; 
+				 stateRes = conn.createStatement(); 
+				 stateRes.executeUpdate(insertValue);
+			}
+			}
+		}
 	public void insertTheOccurrence(Connection conn, int occurrence,
 			String tablename, int articleID, String word) throws SQLException {
 		Statement stateRes = null;
