@@ -40,8 +40,7 @@ EXECUTING THE APPLICATION
 
 Using the Jar file in the command line - this can be achieved if the database has the same structure, name and password as the one in the db_sql_dump folder.
 The Database username and password are:
-USER = "Diana";
-PASS = "ppiytirK";
+...
 
 For labelling helper run: java -jar LabellingHelperApp.jar
 For the system run: java -jar NewsArticleAnalysisApp.jar (this has been removed due to GitHub limit of less than 100 MB)
